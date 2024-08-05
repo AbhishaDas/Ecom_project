@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .vh-100 {
+            height: 100vh;
+        }
+        .divider:after,
+        .divider:before {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+        .form-container {
+            max-width: 450px;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container vh-100 d-flex align-items-center justify-content-center">
+        <div class="row justify-content-center w-100">
+            <div class="col-md-6 d-none d-md-block">
+                <img src="{% static 'images/login.png' %}"
+                     class="img-fluid" alt="Phone image">
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div class="form-container">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">{{ error }}</div>
+                        {% endif %}
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="rememberMe" checked>
+                                <label class="form-check-label" for="rememberMe"> Remember me </label>
+                            </div>
+                            <a href="#!">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-info btn-block">Login</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
