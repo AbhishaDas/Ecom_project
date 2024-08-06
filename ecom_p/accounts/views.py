@@ -5,4 +5,5 @@ def loginn(request):
     return render(request, 'accounts/login.html')
 
 def signup(request):
+    if request.method=="POST":
     return render(request, 'accounts/signup.html')
