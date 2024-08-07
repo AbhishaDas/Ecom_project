@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # This is for the default User model
-    # If you have a custom backend, add it here
+    'accounts.backends.UserInfoBackend'
 ]
 
 
