@@ -72,10 +72,11 @@
                              <li><a href="{% url 'signup' %}">Signup</a></li>
                           </ul>
                        </li>
-                       {% if user.authenticated %}
+                       {% if user_id != '*' %}
                        <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Logout</a>
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                      </li>
+
                      {% endif %}
                         <li class="nav-item">
                            <a class="nav-link" href="#">

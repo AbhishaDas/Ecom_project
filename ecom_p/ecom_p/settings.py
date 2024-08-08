@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'ecom_p.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecom_db',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'USER': 'postgres',
+        'PASSWORD': 'abhi9004',
     }
 }
 
@@ -104,8 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # This is for the default User model
-    'accounts.backends.UserInfoBackend'
+    'django.contrib.auth.backends.ModelBackend', 
 ]
 
 
