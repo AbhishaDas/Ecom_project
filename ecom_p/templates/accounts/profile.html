@@ -1,0 +1,11 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+<form action="" method="post">
+  {% csrf_token %}
+  {{ form.as_p}}
+  <button type="submit">Save</button>
+</form>
+{% endblock content %}

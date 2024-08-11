@@ -1,11 +1,9 @@
 from email import message
-from django.shortcuts import render, redirect
-from .forms import UserForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import EditProfileForm, UserForm
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .models import UserInfo
 from django.db import IntegrityError
-# from .backends import UserInfoBackend
-from django.utils import timezone
 from django.contrib.auth.hashers import check_password
 
 def signup(request):
@@ -71,3 +69,16 @@ def logout(request):
         request.session.flush()
     return redirect('login')
 
+
+def profile(request, user_id):
+    user = get_object_or_404(UserInfo, pk=user_id)
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=user)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('profile', user_id=user_id)
+    else:
+            form = EditProfileForm(instance=user)   
+    return render(request, 'accounts/profile.html', {'form':form, 'user_id':user_id})
+    

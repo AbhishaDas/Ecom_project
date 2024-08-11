@@ -3,13 +3,13 @@ from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 
 class UserInfo(models.Model):
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
-    email = models.EmailField(unique=True, null= False, blank=False)
-    phone = models.CharField(max_length=50, default='',null= False, blank=False)
-    username = models.CharField(max_length=200, null= False, blank=False)
-    password = models.CharField(max_length=200, null= False, blank=False)
-    last_login = models.DateTimeField(auto_now_add= True)
+    first_name      = models.CharField(max_length=200)
+    last_name       = models.CharField(max_length=200)
+    email           = models.EmailField(unique=True, null= False, blank=False)
+    phone           = models.CharField(max_length=50, default='',null= False, blank=False)
+    username        = models.CharField(max_length=200, null= False, blank=False)
+    password        = models.CharField(max_length=200, null= False, blank=False)
+    last_login      = models.DateTimeField(auto_now_add= True)
     
     class Meta:
         db_table = 'userinfo'

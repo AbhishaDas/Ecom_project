@@ -1,0 +1,19 @@
+<h2>Manage Categories</h2>
+
+<!-- Back Button -->
+<form action="{% url 'product_dashboard' %}" method="get">
+    <button type="submit">Back</button>
+</form>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Category</button>
+</form>
+
+<ul>
+    {% for category in categories %}
+        <li>{{ category.name }} <a href="#">Edit</a> <a href="#">Delete</a></li>
+    {% endfor %}
+</ul>
+

@@ -1,0 +1,13 @@
+<h2>Manage Products</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Product</button>
+</form>
+
+<ul>
+    {% for product in products %}
+        <li>{{ product.name }} - {{ product.category.name }} <a href="#">Edit</a> <a href="#">Delete</a></li>
+    {% endfor %}
+</ul>
+

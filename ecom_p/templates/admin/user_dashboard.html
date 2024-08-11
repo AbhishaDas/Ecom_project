@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        {% block title %}
+        <h1 class="text-center mb-4">Users List</h1>
+        {% endblock title %}
+
+        <form method="GET" action="{% url 'user_dashboard' %}" class="form-inline justify-content-center mb-4">
+            <input type="text" name="q" class="form-control mr-2" placeholder="Search users..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_obj in users %}
+                <tr>
+                    <td>{{ user_obj.first_name }} {{ user_obj.last_name }}</td>
+                    <td>{{ user_obj.email }}</td>
+                    <td>{{ user_obj.username }}</td>
+                    <td>{{ user_obj.phone }}</td>
+                    <td>
+                        <a href="{% url 'manage_user' user_obj.id %}" class="btn btn-in btn-sm">Edit/Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
