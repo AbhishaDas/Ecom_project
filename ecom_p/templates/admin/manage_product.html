@@ -1,0 +1,23 @@
+<h2>Manage Products</h2>
+<form action="{% url 'product_dashboard' %}" method="get">
+    <button type="submit">Back</button>
+</form>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="add_product">Add Product</button>
+</form>
+
+<ul>
+    {% for product in products %}
+        <li>
+            {{ product.name }} - {{ product.category.name }} 
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit" name="delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
