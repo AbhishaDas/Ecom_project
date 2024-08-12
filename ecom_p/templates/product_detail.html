@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -194,12 +195,12 @@
                     <div class="preview col-md-6">
                         <div class="preview-pic tab-content">
                             <div class="tab-pane active" id="pic-1">
-                                <img src="http://placekitten.com/400/252" />
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" />
                             </div>
                         </div>
                     </div>
                     <div class="details col-md-6">
-                        <h3 class="product-title">men's shoes fashion</h3>
+                        <h3 class="product-title">{{ product.name }}</h3>
                         <!-- <div class="rating">
                             <div class="stars">
                                 <span class="fa fa-star checked"></span>
@@ -210,8 +211,8 @@
                             </div>
                             <span class="review-no">41 reviews</span>
                         </div> -->
-                        <p class="product-description">Suspendisse quos? Tempus cras iure temporibus? Eu laudantium cubilia sem sem! Repudiandae et! Massa senectus enim minim sociosqu delectus posuere.</p>
-                        <h4 class="price">price: <span>$180</span></h4>
+                        <p class="product-description">{{ product.description }}</p>
+                        <h4 class="price">price: <span>${{ product.price }}</span></h4>
                         <h5 class="sizes">sizes:
                             <span class="size" data-toggle="tooltip" title="small">s</span>
                             <span class="size" data-toggle="tooltip" title="medium">m</span>
