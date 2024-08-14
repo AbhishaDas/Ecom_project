@@ -340,7 +340,7 @@
          <div class="container">
             <div class="box">
                <div class="arrival_bg_box">
-                  <img src="{% static '/images/new1.jpg' %}" alt="">
+                  <img src="{% static '/images/new1.png' %}" alt="">
                </div>
                <div class="row">
                   <div class="col-md-6 ml-auto">
@@ -371,12 +371,13 @@
                </h2>
             </div>
             <div class="row">
-               <div class="col-sm-6 col-md-4 col-lg-4">
+               {% for product in products %}
+               <div class="col-sm-6 col-md-4 col-lg-3">
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
-                           Men's Shirt
+                           <a href="{% url 'product_detail' product.id %}" class="option1">
+                           View
                            </a>
                            <a href="" class="option2">
                            Buy Now
@@ -384,22 +385,25 @@
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="{% static '/images/p1.png'%}" alt="">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
                      </div>
                      <div class="detail-box">
                         <h5>
-                           Men's Shirt
+                           {{ product.name }}
                         </h5>
-                        <h6>
-                           $75
-                        </h6>
                      </div>
+                     <div class="detail-box">
+                       <h5>
+                          {{ product.price }}
+                       </h5>
+                    </div>
                   </div>
                </div>
+               {% endfor %}
             </div>
             <div class="btn-box">
-               <a href="">
-               View All products
+               <a href="{% url 'collections' %}">
+               Visit Store
                </a>
             </div>
          </div>

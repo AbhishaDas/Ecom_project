@@ -24,23 +24,25 @@
                    </div>
                 </div>
                 <div class="img-box">
-                   <img src="{{ product.image }}" alt="{{ product.name }}">
+                   <img src="{{ product.image.url }}" alt="{{ product.name }}">
                 </div>
                 <div class="detail-box">
                    <h5>
                       {{ product.name }}
                    </h5>
-                   <h6>
-                      ${{ product.price }}
-                   </h6>
                 </div>
+                <div class="detail-box">
+                  <h5>
+                     {{ product.price }}
+                  </h5>
+               </div>
              </div>
           </div>
           {% endfor %}
        </div>
        <div class="btn-box">
           <a href="">
-          View All products
+          View More
           </a>
        </div>
     </div>

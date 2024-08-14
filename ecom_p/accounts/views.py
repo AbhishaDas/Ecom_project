@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from .models import UserInfo
 from django.db import IntegrityError
 from django.contrib.auth.hashers import check_password
+from store.models import Product
+import random
 
 def signup(request):
     if 'user_id' in request.session:
@@ -60,8 +62,12 @@ def index(request):
             user = UserInfo.objects.get(pk=user_id)
         except UserInfo.DoesNotExist:
             user = None
+            
+    all_products = list(Product.objects.all())
+    random.shuffle(all_products)  # Shuffle the list to randomize the order
+    selected_products = all_products[:12]  # Select only the first 12 products
 
-    return render(request, 'index.html', {'user': user, 'user_id':user_id})
+    return render(request, 'index.html', {'user': user, 'user_id':user_id, 'products': selected_products})
 
 
 def logout(request):

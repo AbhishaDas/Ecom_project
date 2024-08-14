@@ -1,12 +1,17 @@
 from django.shortcuts import render, get_object_or_404
+import random
 from .models import Product
-from random import sample
 
-# Create your views here.
 def collections(request):
     all_products = list(Product.objects.all())
-    random_products = sample(all_products, len(all_products)) if all_products else []
-    return render(request, 'collections.html', {'products': random_products})
+    random.shuffle(all_products)  # Shuffle the list to randomize the order
+
+    # Debugging: Print the image paths to the console
+    for product in all_products:
+        print(f"Product: {product.name}, Image Path: {product.image.url}")
+
+    return render(request, 'collections.html', {'products': all_products})
+
 
 def product_detail(request, id):
     product = get_object_or_404(Product, id=id)

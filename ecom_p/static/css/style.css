@@ -424,7 +424,8 @@ a:focus {
           transform: translateY(0);
 }
 .arrival_section {
-    background-color: #f5b4b0;
+  background: linear-gradient(to right, #f3c4c2, #fbd5cc  );
+
 }
 .product_section .option_container {
   position: absolute;
@@ -570,7 +571,7 @@ a:focus {
 .why_section .box {
     text-align: center;
     margin-top: 45px;
-    background-color: #002c3e;
+    background-color: #4d0017;
     padding: 45px 50px;
     border-radius: 5px;
     color: #ffffff;
