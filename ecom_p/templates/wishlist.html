@@ -1,0 +1,15 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block content %}
+<h2>Your Wishlist</h2>
+<ul>
+    {% for item in wishlist_items %}
+    <li>
+        <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
+    </li>
+    {% empty %}
+    <li>Your wishlist is empty.</li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}

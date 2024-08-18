@@ -221,7 +221,10 @@
                         </h5>
                         <div class="action">
                             <button class="add-to-cart btn btn-default" type="button">add to cart</button>
-                            <button class="add-to-cart btn btn-default" type="button">add to wishlist</button>
+                            <form action="{% url 'add_to_wishlist' product.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Add to Wishlist</button>
+                            </form>
                         </div>
                     </div>
                 </div>
