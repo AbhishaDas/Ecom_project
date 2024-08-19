@@ -3,13 +3,14 @@
 {% block content %}
 <h2>Your Wishlist</h2>
 <ul>
-    {% for item in wishlist_items %}
-    <li>
-        <a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a>
-    </li>
+    {% for wishlist_item in wishlist_items %}
+        <li>
+            <a href="{% url 'product_detail' wishlist_item.product.id %}">
+                {{ wishlist_item.product.name }} - INR. {{ wishlist_item.product.price }}
+            </a>
+        </li>
     {% empty %}
-    <li>Your wishlist is empty.</li>
+        <li>Your wishlist is empty.</li>
     {% endfor %}
 </ul>
-
 {% endblock content %}

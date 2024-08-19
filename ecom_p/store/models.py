@@ -18,12 +18,19 @@ class Product(models.Model):
     price       = models.DecimalField(max_digits=10, decimal_places=2)
     category    = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     image       = models.ImageField(upload_to='products/')
+    quantity    = models.IntegerField(default=1)
+    in_stock    = models.BooleanField(default=True)
+    
+    def save(self, *args, **kwargs):
+        if self.quantity > 0:
+            self.in_stock = True
+        else:
+            self.in_stock = False
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name
-    
-    
-    
+        
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 import random
 from .models import Product, Wishlist
+from django.contrib.auth.decorators import login_required
 
 def collections(request):
     all_products = list(Product.objects.all())
@@ -20,20 +21,24 @@ def product_detail(request, id):
 def contact(request):
     return render(request, 'contact.html')
 
-from django.contrib.auth.decorators import login_required
-
 @login_required
-def add_to_wishlist(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user, product=product)
-    if not created:
-        # Optionally, handle the case where the item is already in the wishlist
-        pass
-    return redirect('wishlist_view')
+def add_to_wishlist(request, id):
+    # if 'user_id' not in request.session:
+    #     return redirect('login')
+    print(f"User: {request.user}") 
+    product = get_object_or_404(Product, id=id)
+    user = request.user
+
+    if not Wishlist.objects.filter(user=user, product=product).exists():
+        Wishlist.objects.create(user=user, product=product)
+    
+    return redirect('product_detail', id=id)
 
 @login_required
 def wishlist_view(request):
-    wishlist_items = Wishlist.objects.filter(user=request.user)
+    user = request.user
+    wishlist_items = Wishlist.objects.filter(user=user)
     return render(request, 'wishlist.html', {'wishlist_items': wishlist_items})
+
 
 

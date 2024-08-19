@@ -132,7 +132,7 @@
             margin-left: 20px;
         }
 
-        .add-to-cart, .like {
+        .add-to, .like {
             background: #ff9f1a;
             padding: 1.2em 1.5em;
             border: none;
@@ -142,7 +142,7 @@
             transition: background .3s ease;
         }
 
-        .add-to-cart:hover, .like:hover {
+        .add-to:hover, .like:hover {
             background: #b36800;
             color: #fff;
         }
@@ -220,10 +220,10 @@
                             <span class="size" data-toggle="tooltip" title="xtra large">xl</span> -->
                         </h5>
                         <div class="action">
-                            <button class="add-to-cart btn btn-default" type="button">add to cart</button>
+                            <button class="add-to btn btn-default" type="button" >add to cart</button><br>
                             <form action="{% url 'add_to_wishlist' product.id %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit">Add to Wishlist</button>
+                                <button class="add-to btn btn-default" type="submit">Add to Wishlist</button>
                             </form>
                         </div>
                     </div>

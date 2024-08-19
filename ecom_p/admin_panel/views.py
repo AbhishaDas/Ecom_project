@@ -74,26 +74,26 @@ def add_category(request):
 def manage_product(request):
     products = Product.objects.all()
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            
-            #hashing the image
-            image = form.cleaned_data['image']
-            image_content = image.read() 
-            image_hash = hashlib.sha256(image_content).hexdigest() 
-            image_name = f"{image_hash}.{image.name.split('.')[-1]}"
-            image_file = ContentFile(image_content)
-            form.instance.image.save(image_name, image_file)
-            
-            form.save()
+        if 'delete' in request.POST:
+            product_id = request.POST.get('product_id')
+            product = get_object_or_404(Product, id=product_id)
+            product.delete()
             return redirect('manage_product')
+        else:
+            form = ProductForm(request.POST, request.FILES)
+            if form.is_valid(): 
+            #hashing the image
+                image = form.cleaned_data['image']
+                if image:
+                    image_content = image.read() 
+                    image_hash = hashlib.sha256(image_content).hexdigest() 
+                    image_name = f"{image_hash}.{image.name.split('.')[-1]}"
+                    image_file = ContentFile(image_content)
+                    form.instance.image.save(image_name, image_file)
+            
+                form.save()
+                return redirect('manage_product')
     else:
         form = ProductForm()
         
-    if request.method == 'POST' and 'delete' in request.POST:
-        product_id = request.POST.get('product_id')
-        product = get_object_or_404(Product, id=product_id)
-        product.delete()
-        return redirect('manage_product')
-
     return render(request, 'admin/manage_product.html', {'products': products, 'form':form})
