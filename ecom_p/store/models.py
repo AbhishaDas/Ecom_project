@@ -1,7 +1,11 @@
+from ctypes import sizeof
 from email.mime import image
+from math import prod
 from os import name
 from django.db import models
 from django.contrib.auth.models import User
+
+from accounts.models import UserInfo
 
 # Create your models here.
 class Category(models.Model):
@@ -33,7 +37,7 @@ class Product(models.Model):
         
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -42,5 +46,16 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.product.name}'
+    
+class Cart(models.Model):
+    user        = models.ForeignKey(UserInfo, on_delete=models.CASCADE)        
+    product     = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity    = models.PositiveIntegerField(default=0)
+    date_added  = models.DateTimeField(auto_now_add=True)
+    size        = models.CharField(max_length=10)
+    
+    def __str__(self):
+        return f'{self.quantity} x {self.product.name}'
+    
 
     

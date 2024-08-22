@@ -39,7 +39,10 @@ def loginn(request):
             if check_password(password, user.password):
                 auth_login(request, user)
                 request.session['user_id'] = user.id 
+                print(f"logedin_User ID: {user.id}")
+                print(f"logedin_Username: {user.username}")
                 return redirect('home')
+                
             else:
                 error = 'Invalid username or password'
  
@@ -66,6 +69,11 @@ def index(request):
     all_products = list(Product.objects.all())
     random.shuffle(all_products)  # Shuffle the list to randomize the order
     selected_products = all_products[:12]  # Select only the first 12 products
+    
+    if user:
+        print(f"Username: {user.username}")
+    else:
+        print("No user is logged in or user not found.")
 
     return render(request, 'index.html', {'user': user, 'user_id':user_id, 'products': selected_products})
 

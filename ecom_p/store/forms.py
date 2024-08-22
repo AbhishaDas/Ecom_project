@@ -1,7 +1,7 @@
 from dataclasses import fields
 from pyexpat import model
 from django import forms
-from .models import Category, Product, Wishlist
+from .models import Category, Product, Wishlist, Cart
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -11,10 +11,17 @@ class CategoryForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model  = Product
-        fields = ['name', 'description', 'price', 'category', 'image', 'quantity']
+        fields = ['name', 'description', 'price', 'category', 'image', 'quantity','in_stock']
         
         
 class WishlistForm(forms.ModelForm):
     class Meta:
         model = Wishlist
         fields = ['product']
+        
+
+class CartForm(forms.ModelForm):
+    class Meta:
+        model = Cart
+        fields = '__all__'
+        

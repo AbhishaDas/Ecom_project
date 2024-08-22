@@ -1,0 +1,185 @@
+{% extends "layouts/main.html" %}
+{% load static %}
+{% block content %}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+        .shopping-cart {
+            width: 100%;
+            max-width: 750px;
+            margin: 80px auto;
+            background: #FFFFFF;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.10);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title {
+            height: 60px;
+            border-bottom: 1px solid #E1E8EE;
+            padding: 20px 30px;
+            color: #5E6977;
+            font-size: 18px;
+        }
+
+        .item {
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #E1E8EE;
+        }
+
+        .item:first-child {
+            border-top: none;
+        }
+
+        .buttons {
+            margin-right: 60px;
+        }
+
+        .image {
+            margin-right: 50px;
+        }
+
+        .description {
+            margin-right: 60px;
+            width: 115px;
+            color: #43484D;
+        }
+
+        .description span {
+            display: block;
+            font-size: 14px;
+        }
+
+        .quantity {
+            margin-right: 60px;
+        }
+
+        .quantity input {
+            text-align: center;
+            width: 32px;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+
+        button[class*=btn] {
+            width: 30px;
+            height: 30px;
+            background-color: #E1E8EE;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .total-price {
+            width: 83px;
+            text-align: center;
+            font-size: 16px;
+            color: #43484D;
+        }
+
+        @media (max-width: 800px) {
+            .shopping-cart {
+                width: 100%;
+            }
+            .item {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .image img {
+                width: 50%;
+            }
+            .description, .quantity {
+                text-align: center;
+                margin: 6px 0;
+            }
+        }
+
+        .like-btn {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: url('twitter-heart.png');
+            background-size: 2900%;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .is-active {
+            animation-name: animate;
+            animation-duration: .8s;
+            animation-iteration-count: 1;
+            animation-timing-function: steps(28);
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes animate {
+            0%   { background-position: left;  }
+            50%  { background-position: right; }
+            100% { background-position: right; }
+        }
+    </style>
+
+<div class="shopping-cart">
+    <div class="title">Shopping Bag</div>
+    
+    <!-- Example Product Items -->
+    {% for cart_item in cart_items %}
+    <div class="item">
+        <div class="buttons">
+            <span class="delete-btn"></span>
+            <span class="like-btn"></span>
+        </div>
+
+        <div class="image">
+            <img src="{{cart_item.product.image.url}}" alt="Item 1" />
+        </div>
+
+        <div class="description">
+            <span>{{cart_item.product.description}}</span>
+        </div>
+
+        <div class="quantity">
+            <button class="plus-btn" type="button">+</button>
+            <input type="text" value="1" readonly>
+            <button class="minus-btn" type="button">-</button>
+        </div>
+
+        <div class="total-price">INR-{{cart_item.product.price}}</div>
+    </div>
+    {% endfor %}
+    <!-- Add more products here in the same format -->
+</div>
+
+<script>
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('is-active');
+        });
+    });
+
+    document.querySelectorAll('.plus-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.closest('.quantity').querySelector('input');
+            let value = parseInt(input.value, 10);
+            if (value < 100) input.value = value + 1;
+        });
+    });
+
+    document.querySelectorAll('.minus-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.closest('.quantity').querySelector('input');
+            let value = parseInt(input.value, 10);
+            if (value > 1) input.value = value - 1;
+        });
+    });
+</script>
+
+{% endblock content %}
+
