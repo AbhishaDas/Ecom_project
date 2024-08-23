@@ -23,5 +23,8 @@ class WishlistForm(forms.ModelForm):
 class CartForm(forms.ModelForm):
     class Meta:
         model = Cart
-        fields = '__all__'
+        fields = ['product', 'size']
+        widgets = {
+            'size': forms.Select(choices=[('S', 'Small'), ('M', 'Medium'), ('L', 'Large'), ('XL', 'Extra Large')]),
+        }
         

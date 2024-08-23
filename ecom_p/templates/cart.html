@@ -6,7 +6,6 @@
             box-sizing: border-box;
         }
 
-
         .shopping-cart {
             width: 100%;
             max-width: 750px;
@@ -24,6 +23,7 @@
             padding: 20px 30px;
             color: #5E6977;
             font-size: 18px;
+            text-align: center;
         }
 
         .item {
@@ -31,57 +31,79 @@
             display: flex;
             align-items: center;
             border-top: 1px solid #E1E8EE;
+            position: relative; /* Required for the absolute positioning of the close button */
         }
 
         .item:first-child {
             border-top: none;
         }
 
-        .buttons {
-            margin-right: 60px;
-        }
-
         .image {
-            margin-right: 50px;
+            order: -1;
+            margin-right: 20px;
         }
 
-        .description {
-            margin-right: 60px;
-            width: 115px;
+        .image img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .item_info {
+            flex: 1;
             color: #43484D;
+            font-size: 16px;
         }
 
-        .description span {
+        .item_info span {
             display: block;
-            font-size: 14px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
         }
 
         .quantity {
-            margin-right: 60px;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
         }
 
         .quantity input {
             text-align: center;
             width: 32px;
-            border: none;
+            border: 1px solid #E1E8EE;
             background: none;
             font-size: 16px;
-        }
-
-        button[class*=btn] {
-            width: 30px;
-            height: 30px;
-            background-color: #E1E8EE;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
+            margin: 0 5px;
+            padding: 5px;
         }
 
         .total-price {
-            width: 83px;
+            width: 100px;
             text-align: center;
             font-size: 16px;
             color: #43484D;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 40px;
+            color: #050505;
+            cursor: pointer;
+            border: none;
+            background: none;
+            /* font-weight: bold; */
+            line-height: 1;
+            padding: 0;
         }
 
         @media (max-width: 800px) {
@@ -93,11 +115,12 @@
                 justify-content: center;
             }
             .image img {
-                width: 50%;
+                width: 80px;
+                height: 80px;
             }
-            .description, .quantity {
+            .item_info, .quantity {
                 text-align: center;
-                margin: 6px 0;
+                margin: 10px 0;
             }
         }
 
@@ -126,60 +149,64 @@
         }
     </style>
 
-<div class="shopping-cart">
-    <div class="title">Shopping Bag</div>
-    
-    <!-- Example Product Items -->
-    {% for cart_item in cart_items %}
-    <div class="item">
-        <div class="buttons">
-            <span class="delete-btn"></span>
-            <span class="like-btn"></span>
-        </div>
+    <div class="shopping-cart">
+        <div class="title">Shopping Bag</div>
+        
+        {% for cart_item in cart_items %}
+        <div class="item">
+            <div class="close-btn" onclick="removeItem({{cart_item.id}})">×</div>
+            <div class="image">
+                <img src="{{cart_item.product.image.url}}" alt="{{cart_item.product.name}}" />
+            </div>
 
-        <div class="image">
-            <img src="{{cart_item.product.image.url}}" alt="Item 1" />
-        </div>
+            <div class="item_info">
+                <span>{{cart_item.product.name}}</span>
+                <p>{{cart_item.product.description}}</p>
+            </div>
 
-        <div class="description">
-            <span>{{cart_item.product.description}}</span>
-        </div>
+            <div class="quantity">
+                <button class="plus-btn" type="button">+</button>
+                <input type="text" value="1" readonly>
+                <button class="minus-btn" type="button">-</button>
+            </div>
 
-        <div class="quantity">
-            <button class="plus-btn" type="button">+</button>
-            <input type="text" value="1" readonly>
-            <button class="minus-btn" type="button">-</button>
-        </div>
+            <div class="total-price">INR-{{cart_item.product.price}}</div>
 
-        <div class="total-price">INR-{{cart_item.product.price}}</div>
+            <div class="buttons">
+                <span class="like-btn"></span>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-    <!-- Add more products here in the same format -->
-</div>
 
-<script>
-    document.querySelectorAll('.like-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.classList.toggle('is-active');
+    <script>
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('is-active');
+            });
         });
-    });
 
-    document.querySelectorAll('.plus-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const input = this.closest('.quantity').querySelector('input');
-            let value = parseInt(input.value, 10);
-            if (value < 100) input.value = value + 1;
+        document.querySelectorAll('.plus-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.closest('.quantity').querySelector('input');
+                let value = parseInt(input.value, 10);
+                if (value < 100) input.value = value + 1;
+            });
         });
-    });
 
-    document.querySelectorAll('.minus-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const input = this.closest('.quantity').querySelector('input');
-            let value = parseInt(input.value, 10);
-            if (value > 1) input.value = value - 1;
+        document.querySelectorAll('.minus-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.closest('.quantity').querySelector('input');
+                let value = parseInt(input.value, 10);
+                if (value > 1) input.value = value - 1;
+            });
         });
-    });
-</script>
+
+        function removeItem(itemId) {
+            // Implement the logic to remove the item from the cart
+            console.log("Removing item with ID:", itemId);
+            // You can use AJAX or a form submission to remove the item from the cart
+        }
+    </script>
 
 {% endblock content %}
-
