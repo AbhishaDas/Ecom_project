@@ -1,15 +1,79 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Home</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .dashboard_links {
+            text-align: center; /* Center the links */
+            margin-bottom: 20px; /* Add some space below the links */
+        }
+
+        .dashboard_links a {
+            display: inline-block; /* Display links inline */
+            margin: 0 15px; /* Add space between links */
+            padding: 10px 20px; /* Add padding inside the links */
+            background-color: #272731; /* Set background color */
+            color: white; /* Set text color */
+            text-decoration: none; /* Remove underline */
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s ease; /* Smooth transition */
+            width: 500px;
+        }
+
+        .dashboard_links a:hover {
+            background-color: #7a7d81; /* Change background on hover */
+        }
+    </style>
 </head>
 <body>
-    <h1>Admin Dashboard</h1>
-    <div class="dashboard-links">
-        <a href="{% url 'add_category' %}">Add Category</a>
-        <a href="{% url 'manage_product' %}">Add Product</a>
+    <div class="container mt-5">
+        {% block title %}
+        <h1 class="text-center mb-4">Product Dashboard</h1>
+        {% endblock title %}
+        <div class="dashboard_links">
+            <a href="{% url 'add_category' %}">Add Category</a>
+            <a href="{% url 'manage_product' %}">Add Product</a>
+        </div>
+
+        <form method="GET" action="{% url 'product_dashboard' %}" class="form-inline justify-content-center mb-4">
+            <input type="text" name="q" class="form-control mr-2" placeholder="Search users..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Discription</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.description }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>
+                        <a href="{% url 'edit_product' product.id %}" class="btn btn-in btn-sm">Edit/Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

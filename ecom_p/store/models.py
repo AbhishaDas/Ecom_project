@@ -1,5 +1,6 @@
-from ctypes import sizeof
+from ctypes import addressof, sizeof
 from email.mime import image
+from itertools import product
 from math import prod
 from os import name
 from django.db import models
@@ -56,6 +57,28 @@ class Cart(models.Model):
     
     def __str__(self):
         return f'{self.quantity} x {self.product.name}'
+    
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('processed', 'Processed'),
+        ('shipped', 'Shipped'),
+        ('delivered', 'Delivered'),
+        ('canceled', 'Canceled'),
+    ]
+    user             = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
+    product          = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order_id         = models.CharField(max_length=50, unique=True)
+    address          = models.TextField()
+    amount           = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_status   = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    order_date       = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name}"
+    
+    
     
 
     

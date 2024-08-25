@@ -1,0 +1,13 @@
+{% block title %}
+<h1 class="text-center mb-4">Edit/Delete Product</h1>
+{% endblock title %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="save" class="btn btn-primary">Save</button>
+    <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+    <button><a href="{% url 'product_dashboard' %}" class="btn btn-secondary">Cancel</a></button>
+</form>
+{% endblock content %}

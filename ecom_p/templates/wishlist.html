@@ -181,10 +181,15 @@
                     </span>
                 </td>
                 <td>
-                    <div class="action-buttons">
-                        <button class="btn btn-primary">Add to Cart</button>
-                        <button class="btn btn-danger">Remove</button>
-                    </div>
+                        
+                        <div class="action-buttons">
+                            <form method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-primary">Add to Cart</button>
+                                <input type="hidden" name="product_id" value="{{ wishlist_item.product.id }}">
+                                <button type="submit" name="delete" class="btn btn-danger">Remove</button>
+                            </form>
+                        </div>
                 </td>
             </tr>
             {% endfor %}

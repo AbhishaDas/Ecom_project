@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from accounts.models import UserInfo
 from accounts.forms import EditUserForm
 from store.models import Category, Product
-from store.forms import CategoryForm, ProductForm
+from store.forms import CategoryForm, ProductForm, EditProductForm
 import hashlib
 from django.core.files.base import ContentFile
 
@@ -56,7 +56,14 @@ def manage_user(request, user_id):
     return render(request, 'admin/manage_user.html', {'frm': frm, 'user': user})
 
 def product_dashboard(request):
-    return render(request, 'admin/product_dashboard.html')
+    query = request.GET.get('q')
+    if query:
+        product_details = Product.objects.filter(
+            name__icontains = query)|Product.objects.filter(
+            category__name__contains = query)
+    else:
+        product_details = Product.objects.all()
+    return render(request, 'admin/product_dashboard.html',{'products':product_details})
 
 def add_category(request):
     categories = Category.objects.all()
@@ -97,3 +104,21 @@ def manage_product(request):
         form = ProductForm()
         
     return render(request, 'admin/manage_product.html', {'products': products, 'form':form})
+
+def edit_product(request,id):
+    product = get_object_or_404(Product, id=id)
+    if request.POST:
+        if 'save' in request.POST:
+            form = EditProductForm(request.POST, instance=product)
+            if form.is_valid():
+                form.save()
+                return redirect('product_dashboard')
+        elif 'delete' in request.POST:
+            product.delete()
+            return redirect('product_dashboard')
+    else:
+        form = EditProductForm(instance=product)
+    
+    return render(request, 'admin/edit_product.html', {'form':form, 'product':product})
+        
+    

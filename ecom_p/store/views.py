@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 import random
 from accounts.models import UserInfo
 from .models import Product, Wishlist, Cart, User
+from django.http import Http404
 
 def collections(request):
     all_products = list(Product.objects.all())
@@ -45,14 +46,9 @@ def add_to_wishlist(request, id):
     user = get_object_or_404(UserInfo, id=user_id)
     
     product = get_object_or_404(Product, id=id)
-    print(f"Wishlisted_product id: {id}")
-    print(f"Wishlisted_product name:{product.name}")
     
     if not Wishlist.objects.filter(user=user, product=product).exists():
         Wishlist.objects.create(user=user, product=product)
-        print("item added to wishlist")
-    else:
-        print("item already in wishlist")
     
     return redirect('product_detail', id=id)
 
@@ -66,6 +62,18 @@ def wishlist_view(request):
     
     wishlist_items = Wishlist.objects.filter(user=user)
     
+    if request.method == 'POST' and 'delete' in request.POST:
+        product_id = request.POST.get('product_id')
+        print(f"Product ID received: {product_id}")
+        
+        try:
+            product = Product.objects.get(id=product_id)
+            Wishlist.objects.filter(user=user, product=product).delete()
+            return redirect('wishlist')
+        except Product.DoesNotExist:
+            print(f"No Product matches the ID: {product_id}")
+            raise Http404("Product not found")
+        
     return render(request, 'wishlist.html', {'wishlist_items': wishlist_items, 'user':user})
 
 
