@@ -3,6 +3,7 @@ import random
 from accounts.models import UserInfo
 from .models import Product, Wishlist, Cart, User
 from django.http import Http404
+from django.contrib import messages
 
 def collections(request):
     all_products = list(Product.objects.all())
@@ -50,6 +51,7 @@ def add_to_wishlist(request, id):
     if not Wishlist.objects.filter(user=user, product=product).exists():
         Wishlist.objects.create(user=user, product=product)
     
+    messages.success(request, 'Product added to Wishlist')
     return redirect('product_detail', id=id)
 
 
@@ -84,8 +86,12 @@ def view_cart(request):
     user_id = request.session['user_id']
     user = get_object_or_404(UserInfo, id=user_id)
     
+    
     cart_items = Cart.objects.filter(user=user)
-    return render(request, 'cart.html', {'cart_items':cart_items, 'user':user})
+    sub_total = sum(item.product.price*item.quantity for item in cart_items)
+    shipping_cost = 0
+    total = sub_total + shipping_cost
+    return render(request, 'cart.html', {'cart_items':cart_items, 'user':user, 'sub_total':sub_total, 'shipping_cost':shipping_cost,'total':total})
 
  
 def add_to_cart(request, id):
@@ -95,14 +101,30 @@ def add_to_cart(request, id):
     user_id = request.session['user_id']
     user = get_object_or_404(UserInfo, id=user_id)
     product = get_object_or_404(Product, id=id)
-    if not Cart.objects.filter(user=user, product=product).exists():
-        Cart.objects.create(user=user, product=product)
+    selectedSize = request.POST.get('size')
+    
+    cart_item = Cart.objects.filter(user=user, product=product, size=selectedSize).first()
+    if cart_item:
+        cart_item.quantity += 1
+        cart_item.save()
+    else:
+        cart_item = Cart.objects.create(user=user, product=product, size=selectedSize)
+        
+    messages.success(request, 'Product added to Cart')    
     return redirect('product_detail', id=id)
- 
-def remove_from_cart(request, item_id):
-    cart_item = Cart.objects.get(id=item_id)
-    cart_item.delete()
-    return redirect('view_cart')
 
+
+ 
+def remove_from_cart(request, id):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    
+    user_id = request.session['user_id']
+    user = get_object_or_404(UserInfo, id=user_id)
+    product = get_object_or_404(Product, id=id)
+
+    if request.method =='POST' and 'delete' in request.POST:
+        Cart.objects.filter(user=user, product=product).delete()
+        return redirect('view_cart')
 
 

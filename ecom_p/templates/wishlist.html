@@ -150,6 +150,7 @@
 
 <div class="wishlist-container">
     <h2 class="wishlist-header">My Wishlist</h2>
+    {% if wishlist_items %}
     <table class="wishlist-table">
         <thead>
             <tr>
@@ -195,5 +196,8 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <p style="text-align: center; color: var(--text-color); font-size: 18px;">Your wishlist is empty.</p>
+    {% endif %}
 </div>
 {% endblock content %}

@@ -96,14 +96,13 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            font-size: 40px;
+            font-size: 20px;
             color: #050505;
             cursor: pointer;
             border: none;
             background: none;
-            /* font-weight: bold; */
-            line-height: 1;
             padding: 0;
+            line-height: 1;
         }
 
         @media (max-width: 800px) {
@@ -147,14 +146,63 @@
             50%  { background-position: right; }
             100% { background-position: right; }
         }
+
+        .summary {
+        background-color: #f8f9fa;
+        border-top: 1px solid #E1E8EE;
+        padding: 20px;
+    }
+    .summary-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #43484D;
+        margin-bottom: 15px;
+    }
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .summary-item:last-child {
+        margin-bottom: 0;
+    }
+    .summary-label {
+        color: #86939E;
+    }
+    .summary-value {
+        font-weight: bold;
+        color: #43484D;
+    }
+    .summary-total {
+        border-top: 1px solid #E1E8EE;
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+    .checkout-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #5E6977;
+        color: white;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .checkout-btn:hover {
+        background-color: #4a5461;
+    }
     </style>
 
     <div class="shopping-cart">
         <div class="title">Shopping Bag</div>
+        {% if cart_items %}
         
         {% for cart_item in cart_items %}
         <div class="item">
-            <div class="close-btn" onclick="removeItem({{cart_item.id}})">×</div>
             <div class="image">
                 <img src="{{cart_item.product.image.url}}" alt="{{cart_item.product.name}}" />
             </div>
@@ -162,6 +210,7 @@
             <div class="item_info">
                 <span>{{cart_item.product.name}}</span>
                 <p>{{cart_item.product.description}}</p>
+                <h6>Size: {{cart_item.size}}</h6>
             </div>
 
             <div class="quantity">
@@ -175,38 +224,33 @@
             <div class="buttons">
                 <span class="like-btn"></span>
             </div>
+
+            <form class="close-btn-form" action="{% url 'remove_from_cart' cart_item.product.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ cart_item.product.id }}">
+                <button class="close-btn" type="submit" name="delete">&times;</button>
+            </form>
         </div>
         {% endfor %}
+        <div class="summary">
+            <h2 class="summary-title">Order Summary</h2>
+            <div class="summary-item">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-value">INR {{ sub_total }}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Shipping</span>
+                <span class="summary-value">{{ shipping_cost }}</span>
+            </div>
+            <div class="summary-item summary-total">
+                <span class="summary-label">Total</span>
+                <span class="summary-value">INR {{ total }}</span>
+            </div>
+            <button class="checkout-btn">Proceed to Checkout</button>
+        </div>
+        {% else %}
+        <p style="text-align: center; color: var(--text-color); font-size: 18px;">Your Cart is empty.</p>
+        {% endif %}
     </div>
-
-    <script>
-        document.querySelectorAll('.like-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.classList.toggle('is-active');
-            });
-        });
-
-        document.querySelectorAll('.plus-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.closest('.quantity').querySelector('input');
-                let value = parseInt(input.value, 10);
-                if (value < 100) input.value = value + 1;
-            });
-        });
-
-        document.querySelectorAll('.minus-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.closest('.quantity').querySelector('input');
-                let value = parseInt(input.value, 10);
-                if (value > 1) input.value = value - 1;
-            });
-        });
-
-        function removeItem(itemId) {
-            // Implement the logic to remove the item from the cart
-            console.log("Removing item with ID:", itemId);
-            // You can use AJAX or a form submission to remove the item from the cart
-        }
-    </script>
 
 {% endblock content %}
