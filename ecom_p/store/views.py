@@ -126,5 +126,9 @@ def remove_from_cart(request, id):
     if request.method =='POST' and 'delete' in request.POST:
         Cart.objects.filter(user=user, product=product).delete()
         return redirect('view_cart')
+    
+    
+def checkout(request):
+    return render(request, 'checkout.html')
 
 

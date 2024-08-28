@@ -246,7 +246,9 @@
                 <span class="summary-label">Total</span>
                 <span class="summary-value">INR {{ total }}</span>
             </div>
-            <button class="checkout-btn">Proceed to Checkout</button>
+            <a href="{% url 'checkout' %}">
+                <button class="checkout-btn" >Proceed to Checkout</button>
+            </a> 
         </div>
         {% else %}
         <p style="text-align: center; color: var(--text-color); font-size: 18px;">Your Cart is empty.</p>
