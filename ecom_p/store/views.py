@@ -129,6 +129,9 @@ def remove_from_cart(request, id):
     
     
 def checkout(request):
+    user_id = request.session['user_id']
+    user = get_object_or_404(UserInfo, id=user_id)
+    product = get_object_or_404(Product, id=id)
     return render(request, 'checkout.html')
 
 
