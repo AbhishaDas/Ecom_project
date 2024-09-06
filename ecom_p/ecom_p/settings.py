@@ -143,6 +143,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = '/login/'
 
+PAYPAL_CLIENT_ID = 'AfQ2vxA_5uO6SkIX893r8MUfTXwxqtqgrmLPWN8ZFvgGDiwRyMOiYDNMpoLbkZsM7tKMd5fV84G319j_'
+PAYPAL_CLIENT_SECRET = 'ENJWQHHeqLFl6Lh_qC6r6LH81sWFwwS0CTRrNdb7BgP61yWmdx19QO0k0WvDu8N2JeL9YcGOlCBPG1og'
+PAYPAL_MODE = 'sandbox'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

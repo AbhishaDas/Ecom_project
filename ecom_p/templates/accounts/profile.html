@@ -70,11 +70,6 @@
 
 {% block content %}
 <div class="profile-container">
-    <div class="profile-header">
-        <img src="{% static 'images/default-profile.png' %}" alt="Profile Picture" class="profile-picture">
-        <h1 class="profile-name">{{ user.get_full_name }}</h1>
-    </div>
-
     <div class="profile-section">
         <h2 class="section-title">Profile Information</h2>
         <form action="" method="post">
@@ -101,18 +96,6 @@
             </div>
             <button type="submit" class="btn-save">Save Changes</button>
         </form>
-    </div>
-
-    <div class="profile-section">
-        <h2 class="section-title">Order History</h2>
-        <!-- Add your order history content here -->
-        <p>You have no recent orders.</p>
-    </div>
-
-    <div class="profile-section">
-        <h2 class="section-title">Saved Payment Methods</h2>
-        <!-- Add your saved payment methods content here -->
-        <p>You have no saved payment methods.</p>
     </div>
 </div>
 {% endblock content %}

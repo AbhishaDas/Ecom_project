@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 import random
 from accounts.models import UserInfo
-from .models import Product, Wishlist, Cart, User
-from django.http import Http404
+from .models import Product, Wishlist, Cart, Order
+from django.http import Http404, HttpResponse
 from django.contrib import messages
+from .forms import CheckoutForm
+import paypalrestsdk
+from django.conf import settings
 
 def collections(request):
     all_products = list(Product.objects.all())
@@ -128,10 +131,82 @@ def remove_from_cart(request, id):
         return redirect('view_cart')
     
     
-def checkout(request):
-    user_id = request.session['user_id']
-    user = get_object_or_404(UserInfo, id=user_id)
-    product = get_object_or_404(Product, id=id)
+def checkout_view(request):
+    if request.method == 'POST':
+        # Fetch the required product_id from the cart or session
+        product_id = request.POST.get('product_id')  # Ensure product_id is available in the POST request
+        product = Product.objects.get(id=product_id)
+        
+        if product:
+            # Get the billing and shipping details from the form
+            address = request.POST.get('address')
+            city = request.POST.get('city')
+            state = request.POST.get('state')
+            zip_code = request.POST.get('zip')
+
+            # Example: You can calculate total amount, assuming you have product.price
+            total_amount = product.price
+            
+            # Create the order object
+            order = Order.objects.create(
+                product=product,
+                user=request.user,  # assuming the user is logged in
+                address=address,
+                amount=total_amount,
+                status="pending"
+            )
+
+            return redirect('order_confirmation')
+
+        else:
+            return HttpResponse("Product not found", status=404)
+
     return render(request, 'checkout.html')
 
 
+paypalrestsdk.configure({
+    "mode": settings.PAYPAL_MODE,
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_CLIENT_SECRET,
+})
+
+def create_paypal_payment(request):
+    if request.method == 'POST':
+        payment = paypalrestsdk.Payment({
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal"},
+            "redirect_urls": {
+                "return_url": "http://localhost:8000/payment/execute/",
+                "cancel_url": "http://localhost:8000/payment/cancel/"},
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": "Item Name",
+                        "sku": "item",
+                        "price": "10.00",
+                        "currency": "USD",
+                        "quantity": 1}]},
+                "amount": {
+                    "total": "10.00",
+                    "currency": "USD"},
+                "description": "This is the payment transaction description."}]})
+
+        if payment.create():
+            for link in payment.links:
+                if link.rel == "approval_url":
+                    return redirect(link.href)
+        else:
+            print(payment.error)
+    return render(request, 'checkout.html')
+
+def execute_paypal_payment(request):
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
+
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": payer_id}):
+        return redirect('payment_success')
+    else:
+        return redirect('payment_failed')

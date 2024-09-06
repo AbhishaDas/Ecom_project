@@ -1,5 +1,6 @@
 from django.urls import path
 from .import views
+from .views import create_paypal_payment, execute_paypal_payment
 
 
 urlpatterns = [
@@ -11,5 +12,7 @@ urlpatterns = [
     path('cart/', views.view_cart, name='view_cart'),
     path('product/<int:id>/add_to_cart/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:id>/', views.remove_from_cart, name='remove_from_cart'),
-    path('checkout/', views.checkout, name='checkout'),
+    path('checkout/', views.checkout_view, name='checkout'),
+    path('payment/paypal/', create_paypal_payment, name='create_paypal_payment'),
+    path('payment/execute/', execute_paypal_payment, name='execute_paypal_payment'),
 ]

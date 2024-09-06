@@ -3,34 +3,29 @@
 {% block content %}
 
 <style>
-    /* Wrap all checkout-specific styles in a .checkout-page class */
+    /* Keep existing styles and add new styles for payment options if needed */
     .checkout-page .row {
-        display: -ms-flexbox; /* IE10 */
         display: flex;
-        -ms-flex-wrap: wrap; /* IE10 */
         flex-wrap: wrap;
         margin: 0 -16px;
-    }
-
-    .checkout-page .col-25 {
-        -ms-flex: 25%; /* IE10 */
-        flex: 25%;
-    }
-
-    .checkout-page .col-50 {
-        -ms-flex: 50%; /* IE10 */
-        flex: 50%;
-    }
-
-    .checkout-page .col-75 {
-        -ms-flex: 75%; /* IE10 */
-        flex: 75%;
     }
 
     .checkout-page .col-25,
     .checkout-page .col-50,
     .checkout-page .col-75 {
         padding: 0 16px;
+    }
+
+    .checkout-page .col-25 {
+        flex: 25%;
+    }
+
+    .checkout-page .col-50 {
+        flex: 50%;
+    }
+
+    .checkout-page .col-75 {
+        flex: 75%;
     }
 
     .checkout-page .container {
@@ -95,61 +90,71 @@
     <div class="row">
         <div class="col-75">
             <div class="container">
-                <form action="/action_page.php">
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for item in cart_items %}
+                    <input type="hidden" name="product_id_{{ item.product.id }}" value="{{ item.product.id }}">
+                    <input type="hidden" name="quantity{{ item.product.id }}" value="{{ item.quantity }}">
+                    {% endfor %}
 
                     <div class="row">
                         <div class="col-50">
                             <h3>Billing Address</h3>
                             <label for="fname"><i class="fa fa-user"></i> Full Name</label>
-                            <input type="text" id="fname" name="firstname" placeholder="">
+                            <input type="text" id="fname" name="firstname" value="{{ form.first_name.value }}" placeholder="Your full name">
                             <label for="email"><i class="fa fa-envelope"></i> Email</label>
-                            <input type="text" id="email" name="email" placeholder="">
+                            <input type="text" id="email" name="email" value="{{ form.email.value }}" placeholder="Your email">
                             <label for="adr"><i class="fa fa-address-card-o"></i> Address</label>
-                            <input type="text" id="adr" name="address" placeholder="">
+                            <input type="text" id="adr" name="address" value="{{ form.address.value }}" placeholder="Your address">
                             <label for="city"><i class="fa fa-institution"></i> City</label>
-                            <input type="text" id="city" name="city" placeholder="">
+                            <input type="text" id="city" name="city" value="{{ form.city.value }}" placeholder="Your city">
 
                             <div class="row">
                                 <div class="col-50">
                                     <label for="state">State</label>
-                                    <input type="text" id="state" name="state" placeholder="">
+                                    <input type="text" id="state" name="state" value="{{ form.state.value }}" placeholder="State">
                                 </div>
                                 <div class="col-50">
                                     <label for="zip">Zip</label>
-                                    <input type="text" id="zip" name="zip" placeholder="">
+                                    <input type="text" id="zip" name="zip" value="{{ form.zip.value }}" placeholder="Zip">
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-50">
-                            <h3>Payment</h3>
-                            <label for="fname">Accepted Cards</label>
-                            <div class="icon-container">
-                                <i class="fa fa-cc-visa" style="color:navy;"></i>
-                                <i class="fa fa-cc-amex" style="color:blue;"></i>
-                                <i class="fa fa-cc-mastercard" style="color:red;"></i>
-                                <i class="fa fa-cc-discover" style="color:orange;"></i>
-                            </div>
-                            <label for="cname">Name on Card</label>
-                            <input type="text" id="cname" name="cardname" placeholder="">
-                            <label for="ccnum">Credit card number</label>
-                            <input type="text" id="ccnum" name="cardnumber" placeholder="">
-                            <label for="expmonth">Exp Month</label>
-                            <input type="text" id="expmonth" name="expmonth" placeholder="">
+                            <h3>Payment Method</h3>
+                            <label>
+                                <input type="radio" name="payment_method" value="paypal" checked> PayPal
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="razorpay"> Razorpay
+                            </label>
+                            <label>
+                                <input type="radio" name="payment_method" value="card"> Credit/Debit Card
+                            </label>
 
-                            <div class="row">
-                                <div class="col-50">
-                                    <label for="expyear">Exp Year</label>
-                                    <input type="text" id="expyear" name="expyear" placeholder="">
-                                </div>
-                                <div class="col-50">
-                                    <label for="cvv">CVV</label>
-                                    <input type="text" id="cvv" name="cvv" placeholder="">
+                            <div id="card-details" class="payment-option">
+                                <h3>Card Details</h3>
+                                <label for="cname">Name on Card</label>
+                                <input type="text" id="cname" name="cardname" placeholder="Name on card">
+                                <label for="ccnum">Card number</label>
+                                <input type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
+                            
+
+                                <div class="row">
+                                    <div class="col-50">
+                                        <label for="expyear">Valid Upto</label>
+                                        <input type="text" id="expyear" name="expyear" placeholder="MM/YY">
+                                    </div>
+                                    <div class="col-50">
+                                        <label for="cvv">CVV</label>
+                                        <input type="text" id="cvv" name="cvv" placeholder="123">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
                     <label>
                         <input type="checkbox" checked="checked" name="sameadr"> Shipping address same as billing
                     </label>
@@ -158,7 +163,36 @@
             </div>
         </div>
 
+        <div class="col-25">
+            <div class="container">
+                <h4>Cart 
+                    <span class="price" style="color:black">
+                        <i class="fa fa-shopping-cart"></i> 
+                        <b>{{ cart_items.count }}</b>
+                    </span>
+                </h4>
+                {% for item in cart_items %}
+                <p>{{ item.product.name }} <span class="price">{{ item.product.price }} x {{ item.quantity }}</span></p>
+                {% endfor %}
+                <hr>
+                <p>Subtotal <span class="price" style="color:black"><b>{{ sub_total }}</b></span></p>
+                <p>Shipping <span class="price" style="color:black"><b>{{ shipping_cost }}</b></span></p>
+                <p>Total <span class="price" style="color:black"><b>{{ total }}</b></span></p>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    // JavaScript to toggle card details based on payment method selection
+    document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.getElementById('card-details').style.display = this.value === 'card' ? 'block' : 'none';
+        });
+    });
+
+    // Initialize the card details section to be hidden unless the card option is selected
+    document.getElementById('card-details').style.display = document.querySelector('input[name="payment_method"]:checked').value === 'card' ? 'block' : 'none';
+</script>
 
 {% endblock content %}

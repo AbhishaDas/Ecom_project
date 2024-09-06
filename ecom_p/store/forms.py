@@ -33,7 +33,7 @@ class CartForm(forms.ModelForm):
             'size': forms.Select(choices=[('S'), ('M'), ('L'), ('XL')]),
         }
         
-class OrderForm(forms.ModelForm):
+class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields =['address', 'amount']
+        fields =['address']
