@@ -198,9 +198,9 @@
     </style>
 
     <div class="shopping-cart">
-        <div class="title">Shopping Bag</div>
-        {% if cart_items %}
         
+        {% if cart_items %}
+        <div class="title">Shopping Bag</div>
         {% for cart_item in cart_items %}
         <div class="item">
             <div class="image">

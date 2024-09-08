@@ -1,20 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
 import random
 from accounts.models import UserInfo
-from .models import Product, Wishlist, Cart, Order
-from django.http import Http404, HttpResponse
+from .models import Product, Wishlist, Cart, Order, Payment
+from django.http import Http404
 from django.contrib import messages
-from .forms import CheckoutForm
 import paypalrestsdk
+from paypalrestsdk import Payment as PayPalPayment
 from django.conf import settings
+from django.urls import reverse
+from uuid import uuid4
 
 def collections(request):
     all_products = list(Product.objects.all())
-    random.shuffle(all_products)  # Shuffle the list to randomize the order
+    random.shuffle(all_products) 
 
     context = {
-        'products': all_products,  # Add the products to the context
-        'user_id': request.session.get('user_id')  # Add user_id to the context
+        'products': all_products,
+        'user_id': request.session.get('user_id') 
     }
 
     return render(request, 'collections.html', context)
@@ -23,8 +25,8 @@ def collections(request):
 def product_detail(request, id):
     product = get_object_or_404(Product, id=id)
     
-    user_id = request.session.get('user_id')  # Retrieve user_id from session
-    print(f"User ID in product_detail view: {user_id}")  # Debugging line
+    user_id = request.session.get('user_id')  
+    print(f"User ID in product_detail view: {user_id}")  
     
     context = {
         'product': product,
@@ -129,56 +131,84 @@ def remove_from_cart(request, id):
     if request.method =='POST' and 'delete' in request.POST:
         Cart.objects.filter(user=user, product=product).delete()
         return redirect('view_cart')
-    
-    
+
+
 def checkout_view(request):
-    if request.method == 'POST':
-        # Fetch the required product_id from the cart or session
-        product_id = request.POST.get('product_id')  # Ensure product_id is available in the POST request
-        product = Product.objects.get(id=product_id)
-        
-        if product:
-            # Get the billing and shipping details from the form
-            address = request.POST.get('address')
-            city = request.POST.get('city')
-            state = request.POST.get('state')
-            zip_code = request.POST.get('zip')
+    if 'user_id' not in request.session:
+        print('user not authenticated')
+        return redirect('login')
+    
+    user_id = request.session.get('user_id')
+    user = UserInfo.objects.get(id=user_id)
+    
+    if request.method == "POST":
+        full_name = request.POST.get('firstname')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
+        zip_code = request.POST.get('zip')
 
-            # Example: You can calculate total amount, assuming you have product.price
-            total_amount = product.price
-            
-            # Create the order object
-            order = Order.objects.create(
-                product=product,
-                user=request.user,  # assuming the user is logged in
-                address=address,
-                amount=total_amount,
-                status="pending"
-            )
+        full_address = f"{address}, {city}, {state}, {zip_code}"
 
-            return redirect('order_confirmation')
+        cart_items = Cart.objects.filter(user=user)
 
-        else:
-            return HttpResponse("Product not found", status=404)
+        sub_total = sum(item.product.price * item.quantity for item in cart_items)
+        shipping_cost = 0 
+        total = sub_total + shipping_cost
 
-    return render(request, 'checkout.html')
+        order = Order.objects.create(
+            user=user,
+            address=full_address,
+            amount=total,
+            payment_status='pending',
+            order_id=str(uuid4())
+        )
 
+        for item in cart_items:
+            order.product.add(item.product)
+
+        cart_items.delete()
+
+        return redirect(reverse('payment') + f"?order_id={order.id}")
+
+    else:
+        cart_items = Cart.objects.filter(user=user)
+
+        sub_total = sum(item.product.price * item.quantity for item in cart_items)
+        shipping_cost = 0 
+        total = sub_total + shipping_cost
+
+        return render(request, 'checkout.html', {
+            'cart_items': cart_items,
+            'sub_total': sub_total,
+            'shipping_cost': shipping_cost,
+            'total': total
+        })
+
+
+
+def payment(request):
+    return render(request, 'payment.html')
 
 paypalrestsdk.configure({
-    "mode": settings.PAYPAL_MODE,
+    "mode": settings.PAYPAL_MODE,  # sandbox or live
     "client_id": settings.PAYPAL_CLIENT_ID,
     "client_secret": settings.PAYPAL_CLIENT_SECRET,
 })
 
 def create_paypal_payment(request):
     if request.method == 'POST':
-        payment = paypalrestsdk.Payment({
+        # Create the payment object
+        payment = PayPalPayment({
             "intent": "sale",
             "payer": {
-                "payment_method": "paypal"},
+                "payment_method": "paypal"
+            },
             "redirect_urls": {
                 "return_url": "http://localhost:8000/payment/execute/",
-                "cancel_url": "http://localhost:8000/payment/cancel/"},
+                "cancel_url": "http://localhost:8000/payment/cancel/"
+            },
             "transactions": [{
                 "item_list": {
                     "items": [{
@@ -186,27 +216,57 @@ def create_paypal_payment(request):
                         "sku": "item",
                         "price": "10.00",
                         "currency": "USD",
-                        "quantity": 1}]},
+                        "quantity": 1
+                    }]
+                },
                 "amount": {
                     "total": "10.00",
-                    "currency": "USD"},
-                "description": "This is the payment transaction description."}]})
+                    "currency": "USD"
+                },
+                "description": "This is the payment transaction description."
+            }]
+        })
 
+        # Try creating the payment
         if payment.create():
+            # Save the payment details in the database
+            Payment.objects.create(
+                user=request.user,
+                payment_id=payment.id,
+                amount=10.00,  # Change this dynamically based on your item price
+                currency="USD",
+                status="Pending"
+            )
+
             for link in payment.links:
                 if link.rel == "approval_url":
+                    # Redirect the user to PayPal
                     return redirect(link.href)
         else:
             print(payment.error)
+
     return render(request, 'checkout.html')
 
 def execute_paypal_payment(request):
     payment_id = request.GET.get('paymentId')
     payer_id = request.GET.get('PayerID')
 
-    payment = paypalrestsdk.Payment.find(payment_id)
+    payment = PayPalPayment.find(payment_id)
 
     if payment.execute({"payer_id": payer_id}):
-        return redirect('payment_success')
+        payment_record = Payment.objects.get(payment_id=payment_id)
+        payment_record.status = "Completed"
+        payment_record.save()
+
+        context = {"status": "success"}
     else:
-        return redirect('payment_failed')
+        context = {"status": "failed"}
+
+    return render(request, 'payment_status.html', context)
+
+    
+def payment_success(request):
+    return render(request, 'payment_success.html')
+
+def payment_failed(request):
+    return render(request, 'payment_failed.html')
