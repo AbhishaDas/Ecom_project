@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-blue-600 text-white p-6">
+                <h1 class="text-3xl font-bold fade-in">Order Summary</h1>
+                <p class="mt-2 text-lg fade-in delay-1">Order ID: {{ order.order_id }}</p>
+            </div>
+            
+            <div class="p-6">
+                <div class="mb-6 fade-in delay-2">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Customer Details</h2>
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <p class="font-medium">Name:</p>
+                            <p>{{ order.user.first_name }} {{ order.user.last_name }}</p>
+                            <p class="font-medium">Email:</p>
+                            <p>{{ order.user.email }}</p>
+                            <p class="font-medium">Address:</p>
+                            <p>{{ order.address }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6 fade-in delay-3">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Order Details</h2>
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <p class="text-lg">
+                            <span class="font-medium">Total Amount:</span> 
+                            <span class="text-green-600 font-bold text-xl ml-2">${{ order.amount }}</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="text-center fade-in delay-3">
+                    <a href="{% url 'home' %}" class="inline-block bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -2,7 +2,7 @@ from django import forms
 from django.shortcuts import redirect, render, get_object_or_404
 from accounts.models import UserInfo
 from accounts.forms import EditUserForm
-from store.models import Category, Product
+from store.models import Category, Order, Product
 from store.forms import CategoryForm, ProductForm, EditProductForm
 import hashlib
 from django.core.files.base import ContentFile
@@ -121,4 +121,23 @@ def edit_product(request,id):
     
     return render(request, 'admin/edit_product.html', {'form':form, 'product':product})
         
-    
+        
+def order_info(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = Order.objects.get(order_id=order_id)
+
+        new_order_status = request.POST.get('order_status')
+        if new_order_status:
+            order.order_status = new_order_status
+
+        new_payment_status = request.POST.get('payment_status')
+        if new_payment_status:
+            order.payment_status = new_payment_status
+
+        order.save()
+
+        return redirect('order_info')
+
+    order_details = Order.objects.all()
+    return render(request, 'admin/order_info.html', {'orders': order_details})

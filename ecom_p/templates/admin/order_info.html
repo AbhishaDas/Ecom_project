@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .edit-icon {
+            cursor: pointer;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Order Summary</h1>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Amount</th>
+                    <th>Order Status</th>
+                    <th>Payment Status</th>
+                    <th>Order Date</th>
+                    <th>Expected Delivery Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order_obj in orders %}
+                <tr>
+                    <td>{{ order_obj.user.first_name }} {{ order_obj.user.last_name }}</td>
+                    <td>{{ order_obj.address }}</td>
+                    <td>{{ order_obj.amount }}</td>
+                    <td>
+                        <span id="order_status_label_{{ order_obj.id }}">{{ order_obj.get_order_status_display }}</span>
+                        <span class="edit-icon" onclick="showEditForm('{{ order_obj.id }}', 'order_status')">✏️</span>
+                        
+                        <form id="order_status_form_{{ order_obj.id }}" method="POST" class="hide">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order_obj.order_id }}">
+                            <select name="order_status" class="form-control">
+                                {% for choice, label in order_obj.STATUS_CHOICES %}
+                                    <option value="{{ choice }}" {% if order_obj.order_status == choice %} selected {% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button>
+                        </form>
+                    </td>
+                    <td>
+                        <span id="payment_status_label_{{ order_obj.id }}">{{ order_obj.get_payment_status_display }}</span>
+                        <span class="edit-icon" onclick="showEditForm('{{ order_obj.id }}', 'payment_status')">✏️</span>
+                        
+                        <form id="payment_status_form_{{ order_obj.id }}" method="POST" class="hide">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order_obj.order_id }}">
+                            <select name="payment_status" class="form-control">
+                                {% for choice, label in order_obj.PAYMENT_CHOICES %}
+                                    <option value="{{ choice }}" {% if order_obj.payment_status == choice %} selected {% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button>
+                        </form>
+                    </td>
+
+                    <td>{{ order_obj.order_date }}</td>
+                    <td>{{ order_obj.expected_delivery_date|date:"Y-m-d" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Function to show edit form and hide label
+        function showEditForm(orderId, fieldType) {
+            var label = document.getElementById(fieldType + "_label_" + orderId);
+            var form = document.getElementById(fieldType + "_form_" + orderId);
+            label.classList.add('hide');
+            form.classList.remove('hide');
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

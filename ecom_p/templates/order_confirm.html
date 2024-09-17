@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-green-500 text-white p-6 text-center">
+                <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h1 class="text-3xl font-bold fade-in">Order Confirmed</h1>
+                <p class="mt-2 text-lg fade-in delay-1">Thank you for your order!</p>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-700 mb-4 fade-in delay-2">Your order has been placed successfully. Here are the details:</p>
+                
+                <div class="bg-gray-100 rounded-lg p-4 mb-6 fade-in delay-3">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Order Summary</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <p><strong>Name:</strong></p>
+                        <p>{{ user.first_name }} {{ user.last_name }}</p>
+                        <p><strong>Email:</strong></p>
+                        <p>{{ user.email }}</p>
+                        <p><strong>Address:</strong></p>
+                        <p>{{ order.address }}</p>
+                        <p><strong>Amount:</strong></p>
+                        <p>${{ amount }}</p>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{% url 'order_summary' order.order_id %}" class="inline-block bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                        View Order Summary
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

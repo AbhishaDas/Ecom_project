@@ -183,14 +183,19 @@
                 </td>
                 <td>
                         
-                        <div class="action-buttons">
-                            <form method="post">
-                                {% csrf_token %}
-                                <button class="btn btn-primary">Add to Cart</button>
-                                <input type="hidden" name="product_id" value="{{ wishlist_item.product.id }}">
-                                <button type="submit" name="delete" class="btn btn-danger">Remove</button>
-                            </form>
-                        </div>
+                    <div class="action-buttons">
+                        <form method="post">
+                            {% csrf_token %}
+                            <!-- Convert the button into a link for product detail -->
+                            <a href="{% url 'product_detail' wishlist_item.product.id %}" class="btn btn-primary">View Product</a>
+                            
+                            <!-- Hidden input for product_id (for removal) -->
+                            <input type="hidden" name="product_id" value="{{ wishlist_item.product.id }}">
+                            
+                            <!-- Keep the Remove button as a form submission -->
+                            <button type="submit" name="delete" class="btn btn-danger">Remove</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% endfor %}

@@ -1,51 +1,145 @@
 {% extends "layouts/main.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>store</title>
+   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <style>
+      .dropdown-submenu {
+         position: relative;
+      }
+
+      .dropdown-submenu .dropdown-menu {
+         top: 0;
+         left: 100%;
+         margin-top: -1px;
+         display: none;
+      }
+
+      .dropdown-submenu:hover .dropdown-menu {
+         display: block;
+      }
+
+      .btn-group-inline {
+      display: flex;
+      align-items: space-between;
+      gap: 50px; 
+   }
+   
+   .dropdown-menu {
+      min-width: 160px; 
+   }
+   
+   .btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    margin-right: 20px;
+   }
+   .form-control{
+      width: 150px;
+   }
+
+   </style>
+</head>
+<body>
+
 {% block content %}
-<!-- product section -->
+
 <section class="product_section layout_padding">
-    <div class="container">
-       <div class="heading_container heading_center">
-          <h2>
-             Our <span>store</span>
-          </h2>
-       </div>
-       <div class="row">
-          {% for product in products %}
-          <div class="col-sm-6 col-md-4 col-lg-3">
-             <div class="box">
-                <div class="option_container">
-                   <div class="options">
-                      <a href="{% url 'product_detail' product.id %}" class="option1">
-                      View
-                      </a>
-                      <!-- <a href="" class="option2">
-                      Buy Now
-                      </a> -->
-                   </div>
-                </div>
-                <div class="img-box">
-                   <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                </div>
-                <div class="detail-box">
-                   <h5>
-                      {{ product.name }}
-                   </h5>
-                </div>
-                <div class="detail-box">
+   <div class="container">
+      <div class="heading_container heading_center">
+         <h2>
+            Our <span>store</span>
+         </h2>
+      </div>
+
+      <!-- Filter and Sort Section -->
+      <div class="btn-group-inline mb-3 d-flex mr-2">
+         <!-- Filter Dropdown -->
+         <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-right: 20px;">
+               Filter
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="filterDropdownButton">
+               <li class="dropdown-item"><a href="?category=top wear">Top Wear</a></li>
+               <li class="dropdown-item"><a href="?category=bottom wear">Bottom Wear</a></li>
+               <li class="dropdown-item"><a href="?category=dresses">Dresses</a></li>
+               <li class="dropdown-item"><a href="?category=">All</a></li>
+               <li class="dropdown-divider"></li>
+            </ul>
+         </div>
+      
+         <!-- Sort Dropdown -->
+         <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Sort by Price
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sortDropdownButton">
+               <li class="dropdown-item"><a href="?sort_by=low_to_high">Low to High</a></li>
+               <li class="dropdown-item"><a href="?sort_by=high_to_low">High to Low</a></li>
+            </ul>
+         </div>
+         <form method="GET" action="{% url 'collections' %}" class="d-flex">
+         <div class="input-group" style=" margin-left: 20px;">
+            <input type="text" class="form-control" name="search" placeholder="Search by category or product..." aria-label="Search" style="width: 400px; margin-left: 5px;" value="{{ request.GET.search }}">
+            <div class="input-group-append">
+               <button class="btn btn-secondary" type="submit">
+                  <i class="fa fa-search"></i>
+               </button>
+            </div>
+         </div>
+         </form>
+      </div>
+      
+
+      <!-- Product Section -->
+      <div class="row mt-4">
+         {% for product in products %}
+         <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="box">
+               <div class="option_container">
+                  <div class="options">
+                     <a href="{% url 'product_detail' product.id %}" class="option1">
+                     View
+                     </a>
+                  </div>
+               </div>
+               <div class="img-box">
+                  <img src="{{ product.image.url }}" alt="{{ product.name }}">
+               </div>
+               <div class="detail-box">
                   <h5>
-                     {{ product.price }}
+                     {{ product.name }}
                   </h5>
                </div>
-             </div>
-          </div>
-          {% endfor %}
-       </div>
-       <div class="btn-box">
-          <a href="">
-          View More
-          </a>
-       </div>
-    </div>
- </section>
- <!-- end product section -->
+               <div class="detail-box">
+                 <h5>
+                    {{ product.price }}
+                 </h5>
+              </div>
+            </div>
+         </div>
+         {% endfor %}
+      </div>
+
+      <div class="btn-box">
+         <a href="">
+         View More
+         </a>
+      </div>
+   </div>
+</section>
+
 {% endblock content %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

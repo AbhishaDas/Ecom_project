@@ -146,15 +146,27 @@
                                 <span class="size-option" data-size="XL">XL</span>
                             </div>
                         </div>
-                        <form action="{% url 'add_to_cart' product.id %}" method="post">
+                        <form action="{% if is_in_cart %}{% url 'view_cart' %}{% else %}{% url 'add_to_cart' product.id %}{% endif %}" method="post" id="cartForm">
                             {% csrf_token %}
-                            <input type="hidden" name="size" id="selectedSize" value="S">
-                            <button class="btn btn-stylehive w-50" type="submit">Add to Cart</button>
+                            <input type="hidden" name="size" id="selectedSize" value="">
+                            <button class="btn btn-stylehive w-50" type="submit" id="addToCartBtn" disabled>
+                            {% if is_in_cart %}
+                                Go to Cart
+                            {% else %}
+                                Add to Cart
+                            {% endif %}
+                        </button>
                         </form>
                         
-                        <form action="{% url 'add_to_wishlist' product.id %}" method="post">
+                        <form action="{% if is_in_wishlist %}{% url 'wishlist' %}{% else %}{% url 'add_to_wishlist' product.id %}{% endif %}" method="post">
                             {% csrf_token %}
-                            <button class="btn btn-stylehive w-50" type="submit">Add to Wishlist</button>
+                            <button class="btn btn-stylehive w-50" type="submit" id="wishlistBtn">
+                                {% if is_in_wishlist %}
+                                    Already in Wishlist
+                                {% else %}
+                                    Add to Wishlist
+                                {% endif %}
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -170,12 +182,24 @@
                     option.classList.remove('active');
                 });
                 sizeOption.classList.add('active');
-                document.getElementById('selectedSize').value = sizeOption.getAttribute('data-size');
+                const selectedSize = sizeOption.getAttribute('data-size');
+                document.getElementById('selectedSize').value = selectedSize;
+
+                // Enable the Add to Cart button after size selection
+                document.getElementById('addToCartBtn').disabled = false;
+                document.getElementById('addToCartBtn').textContent = 'Add to Cart';
+
+                // Update the button if the product is already in the cart for the selected size
+                const sizeInCart = '{{ size_in_cart }}';
+                if (selectedSize === sizeInCart && '{{ is_in_cart }}' === 'True') {
+                    document.getElementById('addToCartBtn').textContent = 'Go to Cart';
+                    document.getElementById('addToCartBtn').setAttribute('formaction', '{% url "view_cart" %}');
+                }
             });
         });
 
-        // Set default size as active
-        document.querySelector('.size-option[data-size="S"]').classList.add('active');
+        // Initially disable Add to Cart button until size is selected
+        document.getElementById('addToCartBtn').disabled = true;
     </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 from dataclasses import fields
 from pyexpat import model
+from turtle import mode
 from django import forms
 from .models import Category, Product, Wishlist, Cart, Order
 
@@ -37,3 +38,12 @@ class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
         fields =['address']
+        
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = [ 'address', 'amount', 'payment_status']
+        
+        widgets = {
+                'payment_status': forms.Select(choices=Order.STATUS_CHOICES),  # Dropdown for status change
+            }

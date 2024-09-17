@@ -214,9 +214,9 @@
             </div>
 
             <div class="quantity">
-                <button class="plus-btn" type="button">+</button>
-                <input type="text" value="1" readonly>
-                <button class="minus-btn" type="button">-</button>
+                <a href="{% url 'update_cart_quantity' id=cart_item.id action='increase' %}"><button class="plus-btn" type="button">+</button></a>
+                <input type="text" id="quantity-{{ cart_item.id }}" value="{{ cart_item.quantity }}" readonly>
+                <a href="{% url 'update_cart_quantity' id=cart_item.id action='decrease' %}"><button class="minus-btn" type="button">-</button></a>
             </div>
 
             <div class="total-price">INR-{{cart_item.product.price}}</div>
