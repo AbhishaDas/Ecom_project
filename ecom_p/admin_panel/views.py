@@ -1,4 +1,3 @@
-from django import forms
 from django.shortcuts import redirect, render, get_object_or_404
 from accounts.models import UserInfo
 from accounts.forms import EditUserForm
