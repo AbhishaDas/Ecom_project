@@ -3,6 +3,7 @@ from .import views
 
 urlpatterns = [
     path('admin_login/', views.admin_login, name='admin_login'),
+    path('admin_logout/', views.admin_logout, name='admin_logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
     path('manage_user/<int:user_id>/', views.manage_user, name='manage_user'),

@@ -1,13 +1,29 @@
 {% block title %}
-<h1 class="text-center mb-4">Edit/Delete Product</h1>
+<h1 style="text-align: center; margin-bottom: 20px; font-family: Arial, sans-serif; color: #4CAF50;">Manage Product</h1>
 {% endblock title %}
 
 {% block content %}
-<form method="post">
+<form method="post" 
+      style="border: 1px solid #ddd; padding: 20px; border-radius: 5px; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" name="save" class="btn btn-primary">Save</button>
-    <button type="submit" name="delete" class="btn btn-danger">Delete</button>
-    <button><a href="{% url 'product_dashboard' %}" class="btn btn-secondary">Cancel</a></button>
+
+    <!-- Save Button -->
+    <button type="submit" name="save" 
+            style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+        Save
+    </button>
+
+    <!-- Delete Button -->
+    <button type="submit" name="delete" 
+            style="padding: 10px 20px; background-color: #DC3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+        Delete
+    </button>
+
+    <!-- Cancel Button -->
+    <a href="{% url 'product_dashboard' %}" 
+       style="padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; display: inline-block;">
+        Cancel
+    </a>
 </form>
 {% endblock content %}

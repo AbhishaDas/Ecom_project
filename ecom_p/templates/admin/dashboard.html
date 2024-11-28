@@ -1,11 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script>
+        // This prevents the page from being cached
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.history.pushState(null, null, window.location.href);
+            };
+        }
+    </script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
@@ -14,62 +24,115 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-start;
             min-height: 100vh;
         }
-        .container {
-            max-width: 600px;
-            width: 90%;
-            padding: 24px;
-            background-color: #f6f8fa;
-            border: 1px solid #d0d7de;
-            border-radius: 6px;
-            box-shadow: 0 1px 0 rgba(27,31,36,0.04);
+
+        /* Sidebar styles */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            z-index: 1000;
         }
+
+        .sidebar a {
+            padding: 8px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #fff;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        /* Hamburger icon styles */
+        .hamburger {
+            font-size: 30px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .container {
+            margin-left: 40%;
+            /* Adjust for sidebar */
+            display: flex;
+            /* Added this line */
+            justify-content: center;
+
+        }
+
         h1 {
             font-size: 24px;
             font-weight: 600;
-            margin-bottom: 16px;
+
         }
-        .dashboard-links {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-        }
-        .dashboard-links a {
-            text-decoration: none;
-            color: #0969da;
-            background-color: #f6f8fa;
-            border: 1px solid rgba(27,31,36,0.15);
-            padding: 8px 16px;
-            margin: 8px 0;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
-        }
-        .dashboard-links a:hover {
-            background-color: #0969da;
-            color: #ffffff;
-        }
-        @media (max-width: 480px) {
+
+        /* For mobile devices */
+        @media (max-width: 768px) {
+            .sidebar a {
+                font-size: 18px;
+            }
+
+            .hamburger {
+                font-size: 28px;
+            }
+
             .container {
-                width: 100%;
-                border: none;
-                border-radius: 0;
+                margin-left: 0;
             }
         }
     </style>
 </head>
+
 <body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">×</a>
+        <a href="{% url 'user_dashboard' %}">User Dashboard</a>
+        <a href="{% url 'product_dashboard' %}">Product Dashboard</a>
+        <a href="{% url 'order_info' %}">Order Summary</a>
+        <a href="{% url 'admin_logout' %}">Logout</a>
+    </div>
+
+    <!-- Hamburger icon -->
+    <span class="hamburger" onclick="openNav()">&#9776;</span>
+
+    <!-- Main content -->
     <div class="container">
         <h1>Admin Dashboard</h1>
-        <div class="dashboard-links">
-            <a href="{% url 'user_dashboard' %}">User Dashboard</a>
-            <a href="{% url 'product_dashboard' %}">Product Dashboard</a>
-            <a href="{% url 'order_info' %}">Order Summary</a>
-        </div>
     </div>
+
+    <script>
+        // Open the sidebar
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+            document.querySelector('.container').style.marginLeft = "250px";
+        }
+
+        // Close the sidebar
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+            document.querySelector('.container').style.marginLeft = "0";
+        }
+    </script>
 </body>
+
 </html>

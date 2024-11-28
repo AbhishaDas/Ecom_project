@@ -12,10 +12,28 @@
         .hide {
             display: none;
         }
+        /* Back Button */
+        .back-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #525c66;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #d5d8dbd7;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
+        <a href="{% url 'dashboard' %}" class="back-btn">Back to Dashboard</a>
         <h1 class="text-center mb-4">Order Summary</h1>
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
@@ -33,6 +51,7 @@
                 {% for order_obj in orders %}
                 <tr>
                     <td>{{ order_obj.user.first_name }} {{ order_obj.user.last_name }}</td>
+                    
                     <td>{{ order_obj.address }}</td>
                     <td>{{ order_obj.amount }}</td>
                     <td>

@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'store',
     'admin_panel',
     'accounts',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -140,12 +142,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 LOGIN_URL = '/login/'
 
 PAYPAL_CLIENT_ID = 'AfL9_2HNmafi1FU5qVxxv2t_vclDlyODXr1PLKPhHP2juUpJglt6c8lz663aREnpJCMPsM_eQ75879CW'
 PAYPAL_CLIENT_SECRET = 'EKJHC1osLNxlzDTocSirZg9uVTEsChWghIOrH3HwyGPUrojjsHPC8smGfJBPYgJbC_udzG_hLk5IJCSS'
 PAYPAL_MODE = 'sandbox'
+
+
+# settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'abhishadas9004@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'dmlf rhzo qust cmug'    # Replace with your email password
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

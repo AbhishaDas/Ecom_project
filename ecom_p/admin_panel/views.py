@@ -20,6 +20,11 @@ def admin_login(request):
             return render(request, 'admin_login.html', {'error': 'Invalid usename or password'})
     return render(request, 'admin/admin_login.html')
 
+def admin_logout(request):
+    if 'user_id' in request.session:
+        request.session.flush()
+    return redirect('admin_login')
+
 def dashboard(request):
     return render(request, 'admin/dashboard.html')
 

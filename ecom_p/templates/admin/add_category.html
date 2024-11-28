@@ -1,19 +1,151 @@
-<h2>Manage Categories</h2>
+{% load crispy_forms_tags %}
 
-<!-- Back Button -->
-<form action="{% url 'product_dashboard' %}" method="get">
-    <button type="submit">Back</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Categories</title>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Category</button>
-</form>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-<ul>
-    {% for category in categories %}
-        <li>{{ category.name }} <a href="#">Edit</a> <a href="#">Delete</a></li>
-    {% endfor %}
-</ul>
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
 
+        .back-btn, .submit-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .submit-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .form-container {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container form {
+            width: 100%;
+        }
+
+        .form-container button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .categories-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .categories-list li {
+            background-color: #f9f9f9;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .categories-list a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .categories-list a.delete {
+            color: #DC3545;
+        }
+
+        .categories-list a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Page Title -->
+    <h2>Add Categories</h2>
+
+    <!-- Back Button -->
+    <a href="{% url 'product_dashboard' %}" class="back-btn">
+        Back
+    </a>
+
+    <!-- Add Category Form -->
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" name="add_category" class="submit-btn">Add Category</button>
+        </form>
+    </div>
+
+    <!-- Categories List -->
+    <ul class="categories-list">
+        {% for category in categories %}
+            <li>
+                <span>{{ category.name }}</span>
+                <div>
+                    <a href="#" class="delete">Delete</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+</html>
