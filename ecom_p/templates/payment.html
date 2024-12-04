@@ -10,18 +10,18 @@
 }
 
 .card0 {
-	margin: 40px 12px 15px 12px;
-	border: 1px solid #ddd;
-	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-	border-radius: 10px;
-	padding: 20px;
-	background-color: white;
+    margin: 40px 12px 15px 12px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    background-color: white;
 }
 
 #heading2 {
-	font-size: 27px;
-	color: #D50000;
-	text-align: center;
+    font-size: 27px;
+    color: #D50000;
+    text-align: center;
 }
 
 .form-card input,
@@ -43,12 +43,6 @@
     outline-width: 0;
 }
 
-#paypal-info,
-#cash-info {
-    display: none;
-}
-
-/* Radio button styling */
 .radio-group {
     display: flex;
     gap: 20px;
@@ -80,15 +74,12 @@
 </style>
 
 <div class="payment-container">
-	<div class="col-md-10 col-lg-8">
-		<div class="card card0 rounded-0">
-			<div class="form-card">
+    <div class="col-md-10 col-lg-8">
+        <div class="card card0 rounded-0">
+            <div class="form-card">
                 <h2 id="heading2" class="text-danger">Make Payment</h2>
 
                 <div class="radio-group">
-                    <div class="radio" id="credit-radio" data-value="credit">
-                        <img src="https://i.imgur.com/28akQFX.jpg" alt="Credit Card">
-                    </div>
                     <div class="radio" id="paypal-radio" data-value="paypal">
                         <img src="https://i.imgur.com/5QFsx7K.jpg" alt="PayPal">
                     </div>
@@ -97,44 +88,20 @@
                     </div>
                 </div>
 
-                <!-- Card Payment Fields (default view) -->
-                <div id="card-info">
-                    <label class="pay">Name on Card</label>
-                    <input type="text" name="holdername" placeholder="Name">
-
-                    <div class="row">
-                        <div class="col-8 col-md-6">
-                            <label class="pay">Card Number</label>
-                            <input type="text" name="cardno" placeholder="0000-0000-0000-0000" minlength="19" maxlength="19">
-                        </div>
-                        <div class="col-4 col-md-6">
-                            <label class="pay">CVV</label>
-                            <input type="password" name="cvcpwd" placeholder="&#9679;&#9679;&#9679;" minlength="3" maxlength="3">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="pay">Expiration Date</label>
-                            <input type="text" name="exp" placeholder="MM/YY" minlength="5" maxlength="5">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PayPal Fields (hidden by default) -->
-                <div id="paypal-info">
+                <!-- PayPal Fields -->
+                <div id="paypal-info" style="display: none;">
                     <label class="pay">PayPal Email</label>
                     <input type="email" name="paypal_email" placeholder="youremail@example.com">
                 </div>
 
-                <!-- Cash on Delivery Fields (hidden by default) -->
-                <div id="cash-info">
+                <!-- Cash on Delivery Fields -->
+                <div id="cash-info" style="display: none;">
                     <label class="pay">Confirm Your Address</label>
                     <input type="text" name="confirm_address" value="{{ request.session.order_data.full_address }}" readonly>
                 </div>
 
-                <!-- Submit Button for Credit/PayPal -->
-                <div class="row" id="pay-button-section">
+                <!-- Submit Button for PayPal -->
+                <div class="row" id="pay-button-section" style="display: none;">
                     <div class="col-md-12">
                         <input type="submit" value="Pay {{ amount }}" class="btn btn-info placeicon">
                     </div>
@@ -148,45 +115,28 @@
                 </div>
 
             </div>
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 <script>
 // JavaScript for toggling between payment methods
-document.getElementById('credit-radio').addEventListener('click', function() {
-    document.getElementById('card-info').style.display = 'block';
-    document.getElementById('paypal-info').style.display = 'none';
-    document.getElementById('cash-info').style.display = 'none';
-    document.getElementById('pay-button-section').style.display = 'block';
-    document.getElementById('confirm-button-section').style.display = 'none';
-    document.getElementById('credit-radio').classList.add('selected');
-    document.getElementById('paypal-radio').classList.remove('selected');
-    document.getElementById('cash-radio').classList.remove('selected');
-});
-
 document.getElementById('paypal-radio').addEventListener('click', function() {
-    document.getElementById('card-info').style.display = 'none';
     document.getElementById('paypal-info').style.display = 'block';
     document.getElementById('cash-info').style.display = 'none';
     document.getElementById('pay-button-section').style.display = 'block';
     document.getElementById('confirm-button-section').style.display = 'none';
     document.getElementById('paypal-radio').classList.add('selected');
-    document.getElementById('credit-radio').classList.remove('selected');
     document.getElementById('cash-radio').classList.remove('selected');
 });
 
 document.getElementById('cash-radio').addEventListener('click', function() {
-    document.getElementById('card-info').style.display = 'none';
     document.getElementById('paypal-info').style.display = 'none';
     document.getElementById('cash-info').style.display = 'block';
     document.getElementById('pay-button-section').style.display = 'none';
     document.getElementById('confirm-button-section').style.display = 'block';
     document.getElementById('cash-radio').classList.add('selected');
-    document.getElementById('credit-radio').classList.remove('selected');
     document.getElementById('paypal-radio').classList.remove('selected');
 });
 </script>
-
-
 {% endblock content %}

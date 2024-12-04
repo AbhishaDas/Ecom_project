@@ -21,7 +21,16 @@ class UserInfo(models.Model):
             if self.password != old_password:  # Password has been changed
                 self.password = make_password(self.password)
         super().save(*args, **kwargs)
+
+    
+    @staticmethod
+    def get_email_field_name():
+        return 'email'
+    
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
     
     def __str__(self):
         return self.username
+
 
