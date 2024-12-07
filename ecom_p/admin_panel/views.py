@@ -5,6 +5,8 @@ from store.models import Category, Order, Product
 from store.forms import CategoryForm, ProductForm, EditProductForm
 import hashlib
 from django.core.files.base import ContentFile
+from .models import Banner
+from .forms import BannerForm
 
 
 admin_username = 'admin'
@@ -145,3 +147,16 @@ def order_info(request):
 
     order_details = Order.objects.all()
     return render(request, 'admin/order_info.html', {'orders': order_details})
+
+
+
+def banner_admin(request):
+    banner = Banner.objects.first()  # Assuming you manage one banner
+    if request.method == "POST":
+        form = BannerForm(request.POST, request.FILES, instance=banner)
+        if form.is_valid():
+            form.save()
+            return redirect("banner_admin")  # Reload the page
+    else:
+        form = BannerForm(instance=banner)
+    return render(request, "admin/banner_admin.html", {"form": form})

@@ -1,5 +1,7 @@
 from django.urls import path
 from .import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin_login/', views.admin_login, name='admin_login'),
@@ -12,5 +14,7 @@ urlpatterns = [
     path('manage_product/<int:product_id>', views.manage_product, name='manage_product'),
     path('edit_product/<int:id>/', views.edit_product, name='edit_product'),
     path('manage_product/', views.manage_product, name= 'manage_product'),
-    path('order_info/', views.order_info, name='order_info')
-]
+    path('order_info/', views.order_info, name='order_info'),
+    path('banner_admin/', views.banner_admin, name="banner_admin"),
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
