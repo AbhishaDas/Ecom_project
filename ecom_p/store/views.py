@@ -1,17 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
 import random
 from accounts.models import UserInfo
-from .models import Product, Wishlist, Cart, Order, Payment
+from .models import Product, Wishlist, Cart, Order
 from django.http import Http404, HttpResponse
 from django.contrib import messages
-import paypalrestsdk
-from paypalrestsdk import Payment as PayPalPayment
 from django.conf import settings
 from django.urls import reverse
 from uuid import uuid4
 import uuid
 from decimal import Decimal
 from django.db.models import Q
+import stripe
+from django.http import JsonResponse
 
 
 
@@ -249,6 +249,26 @@ def checkout_view(request):
         })
 
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def payment(request):
+    if request.method == 'POST':
+        try:
+            amount = int(request.POST.get('amount', 0)) * 100  # Convert ₹ to paise
+            intent = stripe.PaymentIntent.create(
+                amount=amount,
+                currency='inr',
+                payment_method_types=['card'],
+            )
+            return JsonResponse({'client_secret': intent.client_secret})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return render(request, 'payment.html', {
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY
+    })
+
+    
+    
 def order_confirm(request):
     if 'user_id' not in request.session:
         return redirect('login')
@@ -282,153 +302,10 @@ def order_confirm(request):
             'amount': order_data['amount']
         })
 
-    return render(request, 'order_confirm.html')
+    return render(request, 'order_confirm.html')    
 
 def order_summary(request, order_id):
     order = get_object_or_404(Order, order_id=order_id)
     return render(request, 'order_summary.html', {
         'order': order
     })
-
-
-def payment(request):
-    amount = request.GET.get('amount', 0) 
-    return render(request, 'payment.html',{'amount':amount})
-
-paypalrestsdk.configure({
-    "mode": settings.PAYPAL_MODE,  # sandbox or live
-    "client_id": settings.PAYPAL_CLIENT_ID,
-    "client_secret": settings.PAYPAL_CLIENT_SECRET,
-})
-
-def create_paypal_payment(request):
-    if request.method == 'POST':
-        # Create the payment object
-        payment = PayPalPayment({
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"
-            },
-            "redirect_urls": {
-                "return_url": "http://localhost:8000/payment/execute/",
-                "cancel_url": "http://localhost:8000/payment/cancel/"
-            },
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "Item Name",
-                        "sku": "item",
-                        "price": "10.00",
-                        "currency": "USD",
-                        "quantity": 1
-                    }]
-                },
-                "amount": {
-                    "total": "10.00",
-                    "currency": "USD"
-                },
-                "description": "This is the payment transaction description."
-            }]
-        })
-
-        # Try creating the payment
-        if payment.create():
-            # Save the payment details in the database
-            Payment.objects.create(
-                user=request.user,
-                payment_id=payment.id,
-                amount=10.00,  # Change this dynamically based on your item price
-                currency="USD",
-                status="Pending"
-            )
-
-            for link in payment.links:
-                if link.rel == "approval_url":
-                    # Redirect the user to PayPal
-                    return redirect(link.href)
-        else:
-            print(payment.error)
-
-    return render(request, 'checkout.html')
-
-def execute_paypal_payment(request):
-    payment_id = request.GET.get('paymentId')
-    payer_id = request.GET.get('PayerID')
-
-    payment = PayPalPayment.find(payment_id)
-
-    if payment.execute({"payer_id": payer_id}):
-        # Retrieve stored order data from session
-        order_data = request.session.get('order_data')
-
-        if order_data:
-            # Create the order only after successful payment
-            user = get_object_or_404(UserInfo, id=order_data['user_id'])
-            cart_items = Cart.objects.filter(id__in=order_data['cart_items'])
-            total_amount = order_data['amount']
-
-            order = Order.objects.create(
-                user=user,
-                address=order_data['full_address'],
-                amount=total_amount,
-                payment_status='Completed',
-                order_id=str(uuid4())
-            )
-
-            for item in cart_items:
-                order.product.add(item.product)
-
-            # Clear the cart after payment success
-            cart_items.delete()
-
-            # Mark the payment as completed in the database
-            payment_record = Payment.objects.get(payment_id=payment_id)
-            payment_record.status = "Completed"
-            payment_record.save()
-
-            # Clear the session order data
-            del request.session['order_data']
-
-        context = {"status": "success"}
-    else:
-        context = {"status": "failed"}
-
-    return render(request, 'payment_status.html', context)
-
-
-    
-def payment_success(request):
-    return render(request, 'payment_success.html')
-
-def payment_failed(request):
-    return render(request, 'payment_failed.html')
-
-def process_payment(request, method=None):
-    if request.method == 'POST':
-        # Initialize a flag to track if payment succeeded
-        payment_succeeded = False
-        
-        # Handle PayPal payment
-        if method == 'paypal':
-            email = request.POST.get('paypal_email')
-            # Implement your PayPal payment processing here
-            # Simulating a successful payment (you'll need actual payment gateway logic)
-            if email:  # For example, checking if PayPal email is provided
-                payment_succeeded = True
-
-        # Handle Credit Card payment
-        elif method == 'credit':
-            holder_name = request.POST.get('holdername')
-            card_number = request.POST.get('cardno')
-            # Implement your credit card payment processing here
-            # Simulating a successful payment
-            if holder_name and card_number:  # Simulating a successful transaction
-                payment_succeeded = True
-        
-        # Redirect back to the payment page with the payment status
-        if payment_succeeded:
-            return redirect(reverse('payment_page', kwargs={'status': 'success'}))
-        else:
-            return redirect(reverse('payment_page', kwargs={'status': 'failed'}))
-    
-    return HttpResponse("Invalid request", status=400)

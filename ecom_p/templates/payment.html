@@ -24,8 +24,7 @@
     text-align: center;
 }
 
-.form-card input,
-.form-card textarea {
+.form-card input {
     padding: 10px 8px;
     border: 1px solid lightgrey;
     border-radius: 4px;
@@ -37,8 +36,7 @@
     font-size: 14px;
 }
 
-.form-card input:focus,
-.form-card textarea:focus {
+.form-card input:focus {
     border: 1px solid gray;
     outline-width: 0;
 }
@@ -65,6 +63,19 @@
     border: 2px solid #D50000;
 }
 
+#card-element {
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+#card-errors {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
 .btn-info {
     color: #fff;
     background-color: #17a2b8;
@@ -73,6 +84,7 @@
 }
 </style>
 
+
 <div class="payment-container">
     <div class="col-md-10 col-lg-8">
         <div class="card card0 rounded-0">
@@ -80,30 +92,32 @@
                 <h2 id="heading2" class="text-danger">Make Payment</h2>
 
                 <div class="radio-group">
-                    <div class="radio" id="paypal-radio" data-value="paypal">
-                        <img src="https://i.imgur.com/5QFsx7K.jpg" alt="PayPal">
+                    <div class="radio" id="stripe-radio" data-value="stripe">
+                        <img src="{% static 'images/stripe-logo.png' %}" alt="Stripe">
                     </div>
                     <div class="radio" id="cash-radio" data-value="cash">
-                        <img src="{% static '/images/cod.png' %}" alt="Cash on Delivery">
+                        <img src="{% static 'images/cod.png' %}" alt="Cash on Delivery">
                     </div>
                 </div>
 
-                <!-- PayPal Fields -->
-                <div id="paypal-info" style="display: none;">
-                    <label class="pay">PayPal Email</label>
-                    <input type="email" name="paypal_email" placeholder="youremail@example.com">
+                <!-- Stripe Payment Form -->
+                <div id="stripe-payment-form" style="display: none;">
+                    <!-- <label for="amount" class="pay">Enter Payment Amount (₹):</label>
+                    <input type="number" id="stripe-amount" name="amount" placeholder="Amount in ₹" required> -->
+                    <div id="card-element"></div> <!-- Stripe Card Input -->
+                    <div id="card-errors"></div>
                 </div>
 
-                <!-- Cash on Delivery Fields -->
+                <!-- Confirm Address for Cash on Delivery -->
                 <div id="cash-info" style="display: none;">
                     <label class="pay">Confirm Your Address</label>
                     <input type="text" name="confirm_address" value="{{ request.session.order_data.full_address }}" readonly>
                 </div>
 
-                <!-- Submit Button for PayPal -->
-                <div class="row" id="pay-button-section" style="display: none;">
+                <!-- Stripe Payment Button -->
+                <div class="row" id="stripe-pay-button-section" style="display: none; margin-top: 20px;">
                     <div class="col-md-12">
-                        <input type="submit" value="Pay {{ amount }}" class="btn btn-info placeicon">
+                        <button type="button" id="stripe-pay-button" class="btn btn-info placeicon">Pay ₹{{ request.session.order_data.amount }}</button>
                     </div>
                 </div>
 
@@ -119,24 +133,66 @@
     </div>
 </div>
 
+<script src="https://js.stripe.com/v3/"></script>
 <script>
-// JavaScript for toggling between payment methods
-document.getElementById('paypal-radio').addEventListener('click', function() {
-    document.getElementById('paypal-info').style.display = 'block';
-    document.getElementById('cash-info').style.display = 'none';
-    document.getElementById('pay-button-section').style.display = 'block';
-    document.getElementById('confirm-button-section').style.display = 'none';
-    document.getElementById('paypal-radio').classList.add('selected');
-    document.getElementById('cash-radio').classList.remove('selected');
-});
+    // Initialize Stripe
+    const stripe = Stripe("{{ stripe_publishable_key }}");
+    const elements = stripe.elements();
+    const cardElement = elements.create("card");
+    cardElement.mount("#card-element");
 
-document.getElementById('cash-radio').addEventListener('click', function() {
-    document.getElementById('paypal-info').style.display = 'none';
-    document.getElementById('cash-info').style.display = 'block';
-    document.getElementById('pay-button-section').style.display = 'none';
-    document.getElementById('confirm-button-section').style.display = 'block';
-    document.getElementById('cash-radio').classList.add('selected');
-    document.getElementById('paypal-radio').classList.remove('selected');
-});
+    // Handle payment method toggling
+    document.getElementById("stripe-radio").addEventListener("click", function () {
+        document.getElementById("stripe-payment-form").style.display = "block";
+        document.getElementById("cash-info").style.display = "none";
+        document.getElementById("stripe-pay-button-section").style.display = "block";
+        document.getElementById("confirm-button-section").style.display = "none";
+        document.getElementById("stripe-radio").classList.add("selected");
+        document.getElementById("cash-radio").classList.remove("selected");
+    });
+
+    document.getElementById("cash-radio").addEventListener("click", function () {
+        document.getElementById("stripe-payment-form").style.display = "none";
+        document.getElementById("cash-info").style.display = "block";
+        document.getElementById("stripe-pay-button-section").style.display = "none";
+        document.getElementById("confirm-button-section").style.display = "block";
+        document.getElementById("cash-radio").classList.add("selected");
+        document.getElementById("stripe-radio").classList.remove("selected");
+    });
+
+    // Handle Stripe Payment
+    document.getElementById("stripe-pay-button").addEventListener("click", async function () {
+        const amount = {{ request.session.order_data.amount }};
+        
+        try {
+            const response = await fetch("{% url 'payment' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({ amount })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById("card-errors").textContent = data.error;
+            } else {
+                const { error: stripeError } = await stripe.confirmCardPayment(data.client_secret, {
+                    payment_method: { card: cardElement }
+                });
+
+                if (stripeError) {
+                    document.getElementById("card-errors").textContent = stripeError.message;
+                } else {
+                    alert("Payment successful!");
+                    window.location.href = "{% url 'order_confirm' %}";
+                }
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    });
 </script>
 {% endblock content %}

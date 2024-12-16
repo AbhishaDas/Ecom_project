@@ -147,18 +147,19 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_URL = '/login/'
 
-PAYPAL_CLIENT_ID = 'AfL9_2HNmafi1FU5qVxxv2t_vclDlyODXr1PLKPhHP2juUpJglt6c8lz663aREnpJCMPsM_eQ75879CW'
-PAYPAL_CLIENT_SECRET = 'EKJHC1osLNxlzDTocSirZg9uVTEsChWghIOrH3HwyGPUrojjsHPC8smGfJBPYgJbC_udzG_hLk5IJCSS'
-PAYPAL_MODE = 'sandbox'
 
 
-# settings.py
+# email verification
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'abhishadas9004@gmail.com' 
 EMAIL_HOST_PASSWORD = 'dmlf rhzo qust cmug'    
+
+#payment integration
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51QWCLFE98CMBSmkb4vuMegsMPzOBIlZyXqS7fpC2BBu0fayXyVKHaP54YPoCSrc3SDCvw3xYCYKGfkwYPH9hZob600yY2CXjaS'
+STRIPE_SECRET_KEY = 'sk_test_51QWCLFE98CMBSmkbgFldpp8WiC2Cy630FErLSb0bjq7C7cwKVLaTOJHEKi9Sqn7qU8DRTOvsTI6YK6evrI9okGEa00YLtz9E3q'
 
 
 # Default primary key field type

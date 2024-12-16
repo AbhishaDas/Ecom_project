@@ -99,6 +99,9 @@ def profile(request, user_id):
             form = EditProfileForm(instance=user)   
     return render(request, 'accounts/profile.html', {'form':form, 'user_id':user_id})
 
+def orders(request):
+    return render(request, 'orders.html')
+
 
 
 

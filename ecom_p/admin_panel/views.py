@@ -152,11 +152,20 @@ def order_info(request):
 
 def banner_admin(request):
     banner = Banner.objects.first()  # Assuming you manage one banner
+    if not banner:
+        banner = Banner.objects.create(title="Default Banner")
+    
     if request.method == "POST":
         form = BannerForm(request.POST, request.FILES, instance=banner)
         if form.is_valid():
             form.save()
+            print(f"Banner image saved: {banner.banner_image.url}")  # Debugging line
             return redirect("banner_admin")  # Reload the page
+        else:
+            print(form.errors)  # Check for any errors with the form
     else:
         form = BannerForm(instance=banner)
-    return render(request, "admin/banner_admin.html", {"form": form})
+   
+    
+    return render(request, "admin/banner_admin.html", {"form": form, "banner": banner})
+

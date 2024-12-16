@@ -1,6 +1,6 @@
 from django.urls import path
 from .import views
-from .views import create_paypal_payment, execute_paypal_payment
+# from .views import create_paypal_payment, execute_paypal_payment
 
 
 urlpatterns = [
@@ -17,12 +17,12 @@ urlpatterns = [
     path('payment/', views.payment, name='payment'),
     path('order_confirm/',views.order_confirm, name='order_confirm'),
     path('order-summary/<str:order_id>/', views.order_summary, name='order_summary'),
-    path('payment/paypal/', views.create_paypal_payment, name='create_paypal_payment'),
-    path('payment/execute/', views.execute_paypal_payment, name='execute_paypal_payment'),
-    path('payment/', views.create_paypal_payment, name='create_paypal_payment'),
-    path('payment/execute/', views.execute_paypal_payment, name='execute_paypal_payment'),
-    path('payment/success/', views.payment_success, name='payment_success'),
-    path('payment/failed/', views.payment_failed, name='payment_failed'),
-    path('payment/<str:status>/', views.payment, name='payment'),
-    path('process-payment/<str:method>/', views.process_payment, name='process_payment'),
+    # path('payment/paypal/', views.create_paypal_payment, name='create_paypal_payment'),
+    # path('payment/execute/', views.execute_paypal_payment, name='execute_paypal_payment'),
+    # path('payment/', views.create_paypal_payment, name='create_paypal_payment'),
+    # path('payment/execute/', views.execute_paypal_payment, name='execute_paypal_payment'),
+    # path('payment/success/', views.payment_success, name='payment_success'),
+    # path('payment/failed/', views.payment_failed, name='payment_failed'),
+    # path('payment/<str:status>/', views.payment, name='payment'),
+    # path('process-payment/<str:method>/', views.process_payment, name='process_payment'),
 ]

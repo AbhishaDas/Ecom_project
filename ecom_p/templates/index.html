@@ -1,11 +1,12 @@
 {% extends "layouts/main.html" %}
 {% load static %}
 {% block content %}
-{% if banner.banner_image %}
-      <img src="{{ banner.banner_image.url }}" alt="Banner">
+      {% if banner.banner_image %}
+         <img src="{{ banner.banner_image.url }}" alt="Banner">
       {% else %}
-      <p>No banner image uploaded.</p>
+         <p>No banner image uploaded.</p>
       {% endif %}
+
 
       </div>
       <!-- why section -->
