@@ -35,6 +35,15 @@
 
    {% block extra_css %}
    <style>
+      body {
+         overflow-x: hidden;
+         /* Prevents horizontal scrolling */
+         margin: 0;
+         padding: 0;
+         position: relative;
+         /* Fixes layout shift issue */
+      }
+
       /* CSS for Navbar Brand Logo */
       #logo {
          font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -56,26 +65,28 @@
 
 
       .sidebar {
-         height: 100%;
+         height: 90%;
+         /* Adjust height to be less than 100% */
          width: 0;
          position: fixed;
-         top: 0;
+         top: 5%;
+         /* Adds margin from the top */
          right: 0;
-         /* Sidebar appears from the right */
          background-color: #ffffff;
          color: #000000;
          overflow-x: hidden;
          transition: 0.5s;
-         padding-top: 60px;
+         padding-top: 20px;
+         /* Adjust padding */
          z-index: 1000;
          box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
-         /* Shadow effect */
       }
 
       .sidebar a {
          padding: 8px 16px;
          text-decoration: none;
-         font-size: 25px;
+         font-size: 20px;
+         /* Reduced font size for better alignment */
          color: #000000;
          display: block;
          transition: 0.3s;
@@ -88,33 +99,23 @@
 
       .sidebar .close-btn {
          position: absolute;
-         top: 0;
+         top: 10px;
+         /* Adjusted for the reduced height */
          right: 25px;
-         font-size: 36px;
-         margin-left: 50px;
+         font-size: 30px;
       }
 
-      /* Hamburger icon styles */
       .hamburger {
          font-size: 30px;
          cursor: pointer;
-         margin: 10px;
          position: fixed;
          top: 15px;
          right: 15px;
-         /* Position for right-aligned sidebar */
          z-index: 1100;
       }
 
 
-      .container {
-         margin-left: 40%;
-         /* Adjust for sidebar */
-         display: flex;
-         /* Added this line */
-         justify-content: center;
 
-      }
 
       h1 {
          font-size: 24px;
@@ -135,6 +136,7 @@
          .container {
             margin-left: 0;
          }
+      }
    </style>
    {% endblock extra_css %}
 </head>
@@ -146,7 +148,6 @@
          <div class="container">
             <nav class="navbar navbar-expand-lg custom_nav-container ">
                <a class="navbar-brand" href="{% url 'home' %}" id="logo">StyleHive</a>
-               <!-- <img width="100" height="50" src="{% static '/images/logo.png' %}" alt="#" /> -->
                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                   aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span class=""> </span>
@@ -246,14 +247,14 @@
 
    <script>
       // Open the sidebar
-function openNav() {
-    document.getElementById("mySidebar").style.width = "250px";
-}
+      function openNav() {
+         document.getElementById("mySidebar").style.width = "250px";
+      }
 
-// Close the sidebar
-function closeNav() {
-    document.getElementById("mySidebar").style.width = "0";
-}
+      function closeNav() {
+         document.getElementById("mySidebar").style.width = "0";
+      }
+
 
    </script>
 </body>

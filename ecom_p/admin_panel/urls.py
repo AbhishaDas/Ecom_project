@@ -17,4 +17,6 @@ urlpatterns = [
     path('order_info/', views.order_info, name='order_info'),
     path('banner_admin/', views.banner_admin, name="banner_admin"),
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

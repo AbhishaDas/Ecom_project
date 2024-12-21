@@ -151,10 +151,14 @@ def order_info(request):
 
 
 def banner_admin(request):
-    banner = Banner.objects.first()  # Assuming you manage one banner
+    banner = Banner.objects.first()
     if not banner:
         banner = Banner.objects.create(title="Default Banner")
     
+    print(f"Banner instance: {banner}")
+    print(f"Banner image: {banner.banner_image}")
+    print(f"Banner image URL: {getattr(banner.banner_image, 'url', 'No image URL')}")
+
     if request.method == "POST":
         form = BannerForm(request.POST, request.FILES, instance=banner)
         if form.is_valid():
@@ -162,10 +166,10 @@ def banner_admin(request):
             print(f"Banner image saved: {banner.banner_image.url}")  # Debugging line
             return redirect("banner_admin")  # Reload the page
         else:
-            print(form.errors)  # Check for any errors with the form
+            print("Form errors:", form.errors)
     else:
         form = BannerForm(instance=banner)
    
-    
     return render(request, "admin/banner_admin.html", {"form": form, "banner": banner})
+
 
