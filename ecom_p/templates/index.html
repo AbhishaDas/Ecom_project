@@ -2,11 +2,6 @@
 {% load static %}
 {% block content %}
 
-<h2>Debugging Banner</h2>
-<p>Banner object: {{ banner }}</p>
-<p>Banner image: {{ banner.banner_image }}</p>
-<p>Banner image URL: {{ banner.banner_image.url }}</p>
-
 {% if banner.banner_image %}
     <h3>Banner Image:</h3>
     <img src="{{ banner.banner_image.url }}" alt="Banner" style="max-width: 100%; height: auto;">

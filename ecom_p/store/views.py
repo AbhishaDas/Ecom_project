@@ -84,7 +84,6 @@ def product_detail(request, id):
 
 
 
-def contact(request):
     context = {
         'user_id': request.session.get('user_id')
     }

@@ -16,6 +16,7 @@ urlpatterns = [
     path('manage_product/', views.manage_product, name= 'manage_product'),
     path('order_info/', views.order_info, name='order_info'),
     path('banner_admin/', views.banner_admin, name="banner_admin"),
+    path('dashboard/', views.progress_graph, name='signup_progress'),
 
 ]
 if settings.DEBUG:

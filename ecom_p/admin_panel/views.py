@@ -7,6 +7,14 @@ import hashlib
 from django.core.files.base import ContentFile
 from .models import Banner
 from .forms import BannerForm
+import matplotlib.pyplot as plt
+import io
+import urllib
+import base64
+from django.db.models.functions import TruncDay
+from django.db.models import Count
+from django.shortcuts import render
+from accounts.models import UserInfo
 
 
 admin_username = 'admin'
@@ -171,5 +179,36 @@ def banner_admin(request):
         form = BannerForm(instance=banner)
    
     return render(request, "admin/banner_admin.html", {"form": form, "banner": banner})
+
+
+def progress_graph(request):
+    # Aggregate signups per day
+    data = UserInfo.objects.annotate(day=TruncDay('last_login')) \
+        .values('day') \
+        .annotate(signup_count=Count('id')) \
+        .order_by('day')
+    
+    # Extract labels and values for the graph
+    dates = [entry['day'].strftime('%Y-%m-%d') for entry in data]
+    counts = [entry['signup_count'] for entry in data]
+    
+    # Generate the graph
+    plt.figure(figsize=(10, 6))
+    plt.plot(dates, counts, marker='o', linestyle='-', color='b')
+    plt.title('User Signups Over Time')
+    plt.xlabel('Date')
+    plt.ylabel('Number of Signups')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    
+    # Save the graph to a buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    graph = base64.b64encode(buffer.read()).decode('utf-8')
+    buffer.close()
+    
+    return render(request, 'dashboard.html', {'graph': graph})
+
 
 
